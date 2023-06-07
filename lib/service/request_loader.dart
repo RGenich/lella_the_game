@@ -1,25 +1,33 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
 
 class Requests {
-  static Future<List<Request>> deserialize() async {
-    List<Request> _requests = [];
-    File file = File("assets/requests.json");
-    String content = await file.readAsString();
-    final decoded = json.decode(content);
-    for (final item in decoded) {
-      _requests.add(Request(item["number"] as int, item["header"] as String,
-          item["assetName"] as String, item["description"] as String));
-    }
-    return _requests;
+  static List<RequestModel> deserialize()  {
+    // List<RequestModel> _requests =
+    return [
+      new RequestModel("he", "please", "work,", 1)
+    ];
   }
 }
+  //   String content = await rootBundle.loadString('assets/requests.json');
+  //   final decoded = json.decode(content);
+  //   for (final item in decoded) {
+  //     _requests.add(RequestModel(
+  //         item["header"] as String,
+  //         item["asset_name"] as String,
+  //         item["description"] as String,
+  //         item["num"] as int));
+  //   }
+  //   return _requests;
+  // }
+// }
 
-class Request {
-  final int number;
+class RequestModel {
   final String header;
-  final String assetName;
+  final String asset_name;
   final String description;
+  bool isOpen = false;
+  final int num;
 
-  Request(this.number, this.header, this.assetName, this.description);
+  RequestModel(this.header, this.asset_name, this.description, this.num);
 }
