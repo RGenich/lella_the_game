@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CellField extends StatefulWidget {
-  final RequestModel request;
+  final RequestData request;
 
-  CellField(RequestModel this.request);
+  CellField(RequestData this.request);
 
   @override
   State<CellField> createState() => _CellFieldState(request);
@@ -17,8 +17,8 @@ class _CellFieldState extends State<CellField> {
   Color openedColor = Color.fromRGBO(255, 255, 255, 0);
   Color closedColor = Color.fromRGBO(0, 0, 0, 0.5);
   Color cellColor = Color.fromRGBO(255, 255, 255, 0);
-  RequestModel request;
-  _CellFieldState(RequestModel this.request);
+  RequestData request;
+  _CellFieldState(RequestData this.request);
 
   @override
   Widget build(BuildContext context) {

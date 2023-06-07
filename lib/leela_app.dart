@@ -35,9 +35,9 @@ class LeelaAppState extends ChangeNotifier {
   var current = WordPair.random();
   var favArray = <WordPair>[];
   int count = 0;
-  List<RequestModel> _requests = List.empty(growable: true);
+  List<RequestData> _requests = List.empty(growable: true);
 
-  Future<List<RequestModel>> get loadRequests async {
+  Future<List<RequestData>> get loadRequests async {
     return loadRequest();
     // return _requests;
   }
@@ -56,7 +56,7 @@ class LeelaAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<RequestModel>> loadRequest() async {
+  Future<List<RequestData>> loadRequest() async {
     if (_requests.isEmpty) {
       var list = await Requests.deserialize();
       _requests.addAll(list);
