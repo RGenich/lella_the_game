@@ -24,15 +24,16 @@ class _CellFieldState extends State<CellField> {
   Widget build(BuildContext context) {
     cellColor = request.isOpen ? openedColor: closedColor;
     //todo: почему я использую  setState c провадйером?
-    // var appstate = context.watch<LeelaAppState>();
-    // var requestList = appstate.requests;
+    var appState = context.watch<LeelaAppState>();
+    // var requestList = appState.requests;
     return Container(
       key: UniqueKey(),
-      height: 94.0,
+      height: 83.0,
       width: 43.0,
       decoration: BoxDecoration(border: Border.all(color: cellColor), color: cellColor),
       child: InkWell(
           onTap: () {
+            appState.makeRecords(request);
             setState(() {
               request.isOpen = true;
               cellColor = Color.fromRGBO(255, 255, 255, 0);

@@ -1,3 +1,5 @@
+import 'package:Leela/features/field/interraction.dart';
+import 'package:Leela/features/field/overlay_data.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_loader.dart';
 import 'package:flutter/material.dart';
@@ -16,20 +18,24 @@ class _FieldWidgetState extends State<FieldWidget> {
   @override
   void initState() {
     super.initState();
-    request = Requests.deserialize();
+    request = Requests.getRequests();
   }
 
   @override
   Widget build(BuildContext context) {
+    context.widget.key;
     var futureBuilder = FutureBuilder<List<RequestData>>(
         future: request,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            //жетская необходимость в рефакторинге
             List<RequestData> requestsData = snapshot.requireData;
-            List<GameRow> childrenRows = createRows(requestsData);
+            List<Widget> columnChildren = [OverlayInfo()];
+            columnChildren.addAll(createRows(requestsData));
+            columnChildren.add(PlayerInput());
             return Container(
               child: Column(
-                children: childrenRows,
+                children: columnChildren,
                 mainAxisAlignment: MainAxisAlignment.end,
               ),
               decoration: BoxDecoration(
@@ -40,7 +46,8 @@ class _FieldWidgetState extends State<FieldWidget> {
               ),
             );
           } else {
-            return Text("Zalupa");
+            //TODO: Крутилка
+            return Text("Loading...");
           }
         });
 

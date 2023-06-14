@@ -38,15 +38,14 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-
             BottomNavigationBar(onTap: _onItemTapped, items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.accessibility_rounded),
-                label: 'Game',
-              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.format_list_numbered),
                 label: 'Requests',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.play_arrow_outlined),
+                label: 'Game',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.school),
@@ -84,7 +83,6 @@ class _HomePageState extends State<HomePage> {
       );
     });
   }
-
 
   // BottomNavigationBar(onTap: _onItemTapped, items: [
   //   BottomNavigationBarItem(
