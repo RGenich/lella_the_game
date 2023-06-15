@@ -44,9 +44,6 @@ class LeelaAppState extends ChangeNotifier {
   int _currentPosition = 0;
   Set<int> _openedCells = Set();
   bool openingTime = false;
-  // bool expanded = false;
-
-  // double lottieOpacity = 1.0;
   //
   // Future<List<RequestData>> get loadRequests async {
   //   return loadRequest();
@@ -98,12 +95,12 @@ class LeelaAppState extends ChangeNotifier {
 
   void openRequest(RequestData request) async {
     // if (currentPosition > 0) {
-    // var requests = await Requests.getRequests();
-    // var reqToOpen = requests.firstWhere((element) => element.num == currentPosition);
-    request.isOpen = true;
-    openedCells.add(request.header);
-    notifyListeners();
-    // return reqToOpen;
+      // var requests = await Requests.getRequests();
+      // var reqToOpen = requests.firstWhere((element) => element.num == currentPosition);
+      request.isOpen = true;
+      openedCells.add(request.header);
+      notifyListeners();
+      // return reqToOpen;
     // }
   }
 
@@ -117,8 +114,4 @@ class LeelaAppState extends ChangeNotifier {
     openingTime = true;
     notifyListeners();
   }
-
-  // void expandNow() {
-  //   expanded = true;
-  // }
 }

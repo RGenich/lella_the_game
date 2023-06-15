@@ -19,17 +19,17 @@ class _LittleCardState extends State<LittleCard> {
   bool expanded = false;
   double opacityLevel = 1.0;
 
-  // initState() {
-  //   super.initState();
-    // Future.delayed(Duration(milliseconds: 2600)).then((value) => setState(() {
-    //       expanded = !expanded;
-          // opacityLevel = opacityLevel == 0 ? 1.0 : 0.0;
+  initState() {
+    super.initState();
+    Future.delayed(Duration(milliseconds: 2600)).then((value) => setState(() {
+          expanded = !expanded;
+          opacityLevel = opacityLevel == 0 ? 1.0 : 0.0;
           // Future.delayed(Duration(seconds: 3))
           //     .then((value) => _changeOpacity());
           // }))
           // ;
-        // }));
-  // }
+        }));
+  }
 
   // void _changeOpacity() {
   //   setState(() => );
@@ -57,16 +57,16 @@ class _LittleCardState extends State<LittleCard> {
                     child: SingleChildScrollView(
                       child: Column(children: [
                         Stack(children: [
-                          AnimatedOpacity(
-                              opacity: opacityLevel,
-                              duration: Duration(seconds: 2),
-                              child: Lottie.asset('assets/dice.json',
-                                  repeat: false)),
                           Image.asset(
                             // opacity: const AlwaysStoppedAnimation(0.1),
                             'assets/images/${requestData.asset_name}.jpg',
                             scale: 0.1,
                           ),
+                          AnimatedOpacity(
+                              opacity: opacityLevel,
+                              duration: Duration(seconds: 2),
+                              child: Lottie.asset('assets/dice.json',
+                                  repeat: false)),
                         ]),
                         Container(
                             child: Padding(
