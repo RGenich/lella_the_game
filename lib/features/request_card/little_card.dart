@@ -24,16 +24,14 @@ class _LittleCardState extends State<LittleCard> {
     Future.delayed(Duration(milliseconds: 2600)).then((value) => setState(() {
           expanded = !expanded;
           opacityLevel = opacityLevel == 0 ? 1.0 : 0.0;
-          // Future.delayed(Duration(seconds: 3))
-          //     .then((value) => _changeOpacity());
-          // }))
+          Future.delayed(Duration(seconds: 3)).then((value) => _changeOpacity());
           // ;
         }));
   }
 
-  // void _changeOpacity() {
-  //   setState(() => );
-  // }
+  void _changeOpacity() {
+    setState(() => opacityLevel == 1.0 ? 0.0 : 1.0);
+  }
 
   @override
   Widget build(BuildContext context) {

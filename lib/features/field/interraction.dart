@@ -24,6 +24,7 @@ class PlayerInput extends StatelessWidget {
               showDialog(
                   context: context,
                   builder: (context) {
+                    //TODO: ошибка здесь
                     appState.markOpenTime();
                     return LittleCard(request);
                   });

@@ -34,6 +34,7 @@ class _LeelaAppState extends State<LeelaApp> {
 }
 
 class LeelaAppState extends ChangeNotifier {
+
   var current = WordPair.random();
   var favArray = <WordPair>[];
   List<int> _diceScores = []; //Последовательность выпавших очков
@@ -112,6 +113,6 @@ class LeelaAppState extends ChangeNotifier {
 
   void markOpenTime() {
     openingTime = true;
-    notifyListeners();
+    // notifyListeners();
   }
 }
