@@ -21,16 +21,17 @@ class _LittleCardState extends State<LittleCard> {
 
   initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 2600)).then((value) => setState(() {
+    Future.delayed(Duration(milliseconds: 2800)).then((value) => setState(() {
           expanded = !expanded;
           opacityLevel = opacityLevel == 0 ? 1.0 : 0.0;
-          Future.delayed(Duration(seconds: 3)).then((value) => _changeOpacity());
+          // Future.delayed(Duration(seconds: 3)).then((value) =>
+          // _changeOpacity();
           // ;
         }));
   }
 
   void _changeOpacity() {
-    setState(() => opacityLevel == 1.0 ? 0.0 : 1.0);
+    // setState(() => opacityLevel == 1.0 ? 0.0 : 1.0);
   }
 
   @override
@@ -42,7 +43,7 @@ class _LittleCardState extends State<LittleCard> {
           var requestData = snapshot.requireData;
           return Center(
             child: AnimatedContainer(
-              height: expanded ? 650.0 : 400.0,
+              height: expanded ? 700.0 : 400.0,
               duration: Duration(seconds: 3),
               child: Card(
                 borderOnForeground: true,
@@ -62,8 +63,8 @@ class _LittleCardState extends State<LittleCard> {
                           ),
                           AnimatedOpacity(
                               opacity: opacityLevel,
-                              duration: Duration(seconds: 2),
-                              child: Lottie.asset('assets/dice.json',
+                              duration: Duration(milliseconds: 3000),
+                              child: Lottie.asset('assets/lotties/dice.json',
                                   repeat: false)),
                         ]),
                         Container(
@@ -77,7 +78,7 @@ class _LittleCardState extends State<LittleCard> {
             ),
           );
         } else {
-          return Text('Loading...');
+          return Center(child: Text('Loading...'));
         }
       },
     );
