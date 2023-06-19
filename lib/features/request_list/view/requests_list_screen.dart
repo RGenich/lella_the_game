@@ -1,4 +1,4 @@
-import 'package:Leela/features/request_card/little_card.dart';
+import 'package:Leela/features/request_card/mini_card.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_loader.dart';
 import 'package:flutter/material.dart';

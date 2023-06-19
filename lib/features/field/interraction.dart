@@ -2,7 +2,7 @@ import 'package:Leela/leela_app.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../request_card/little_card.dart';
+import '../request_card/mini_card.dart';
 
 class PlayerInput extends StatelessWidget {
   const PlayerInput({super.key});
@@ -25,8 +25,8 @@ class PlayerInput extends StatelessWidget {
                   context: context,
                   builder: (context) {
                     //TODO: ошибка здесь
-                    appState.markOpenTime();
-                    return LittleCard(request);
+                    // appState.markOpenTime();
+                    return MiniCard(request);
                   });
               // Navigator.of(context).pushNamed("/card", arguments: request);
             },

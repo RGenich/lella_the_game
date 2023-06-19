@@ -1,11 +1,8 @@
+import 'package:Leela/features/field/play_zone.dart';
 import 'package:Leela/features/field/interraction.dart';
 import 'package:Leela/features/field/overlay_data.dart';
-import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'field_cell.dart';
 
 class FieldWidget extends StatefulWidget {
   @override
@@ -15,6 +12,7 @@ class FieldWidget extends StatefulWidget {
 class _FieldWidgetState extends State<FieldWidget> {
   List<GameRow> rows = [];
   var request;
+
   @override
   void initState() {
     super.initState();
@@ -29,19 +27,18 @@ class _FieldWidgetState extends State<FieldWidget> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             //жетская необходимость в рефакторинге
-            List<RequestData> requestsData = snapshot.requireData;
-            List<Widget> columnChildren = [OverlayInfo()];
-            columnChildren.addAll(createRows(requestsData));
-            columnChildren.add(PlayerInput());
-            return Container(
-              child: Column(
-                children: columnChildren,
-                mainAxisAlignment: MainAxisAlignment.end,
-              ),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/god.jpg"),
-                  fit: BoxFit.cover,
+            var requestsData = snapshot.requireData;
+            return Scaffold(
+              body: Container(
+                child: Column(
+                  children: [OverlayInfo(), PlayZone(requestsData), PlayerInput()],
+                  // mainAxisAlignment: MainAxisAlignment.end,
+                ),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/god.jpg"),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             );
@@ -97,46 +94,46 @@ class _FieldWidgetState extends State<FieldWidget> {
 //
 //   // return then;
 // }
-
-  List<GameRow> createRows(requests) {
-    var startPos = 63;
-    var endPos = 72;
-    List<GameRow> rows = [];
-    for (var j = 1; j < 9; ++j) {
-      var requestsOfRow = requests.getRange(startPos, endPos).toList();
-      var gameRow = GameRow(requestsOfRow, j % 2 == 0);
-
-      rows.add(gameRow);
-      startPos -= 9;
-      endPos -= 9;
-    }
-    return rows;
-  }
-}
-
-class GameRow extends StatelessWidget {
-  final List<RequestData> requestsOfRow;
-  final bool isDirectSequence;
-  List<Widget> cards = [];
-
-  GameRow(List<RequestData> this.requestsOfRow, bool this.isDirectSequence,
-      {Key? key})
-      : super(key: key) {
-    cards = createRowSequence(this.isDirectSequence);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(children: cards);
-  }
-
-  List<Widget> createRowSequence(bool isDirectSequence) {
-    List<Widget> cells = [];
-    var sequence = isDirectSequence ? requestsOfRow : requestsOfRow.reversed;
-    for (var req in sequence) {
-      cells.add(
-          Padding(padding: const EdgeInsets.all(1.0), child: CellField(req)));
-    }
-    return cells;
-  }
+//
+//   List<GameRow> createRows(requests) {
+//     var startPos = 63;
+//     var endPos = 72;
+//     List<GameRow> rows = [];
+//     for (var j = 1; j < 9; ++j) {
+//       var requestsOfRow = requests.getRange(startPos, endPos).toList();
+//       var gameRow = GameRow(requestsOfRow, j % 2 == 0);
+//
+//       rows.add(gameRow);
+//       startPos -= 9;
+//       endPos -= 9;
+//     }
+//     return rows;
+//   }
+// }
+//
+// class GameRow extends StatelessWidget {
+//   final List<RequestData> requestsOfRow;
+//   final bool isDirectSequence;
+//   List<Widget> cards = [];
+//
+//   GameRow(List<RequestData> this.requestsOfRow, bool this.isDirectSequence,
+//       {Key? key})
+//       : super(key: key) {
+//     cards = createRowSequence(this.isDirectSequence);
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(children: cards);
+//   }
+//
+//   List<Widget> createRowSequence(bool isDirectSequence) {
+//     List<Widget> cells = [];
+//     var sequence = isDirectSequence ? requestsOfRow : requestsOfRow.reversed;
+//     for (var req in sequence) {
+//       cells.add(
+//           Padding(padding: const EdgeInsets.all(1.0), child: CellField(req)));
+//     }
+//     return cells;
+//   }
 }

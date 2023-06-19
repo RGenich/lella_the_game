@@ -35,21 +35,26 @@ class _LeelaAppState extends State<LeelaApp> {
 
 class LeelaAppState extends ChangeNotifier {
 
+  final _playZoneKey = GlobalKey();
+  get playZoneKey => _playZoneKey;
+  Size _playZoneSize = Size(50, 100);
+  Size get playZoneSize => _playZoneSize;
   var current = WordPair.random();
   var favArray = <WordPair>[];
   List<int> _diceScores = []; //Последовательность выпавших очков
   List<String> openedCells = [];
-
-  // int count = 0;
-  // List<RequestData> _requests = List.empty(growable: true);
   int _currentPosition = 0;
   Set<int> _openedCells = Set();
   bool openingTime = false;
-  //
-  // Future<List<RequestData>> get loadRequests async {
-  //   return loadRequest();
-  //   // return _requests;
-  // }
+  Offset _markerPos = Offset(0, 0);
+
+  int get currentPosition => _currentPosition;
+  Offset get markerPos => _markerPos;
+
+  void setMarkerPos(Offset value) {
+    _markerPos = value;
+    notifyListeners();
+  }
 
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
 
@@ -78,6 +83,7 @@ class LeelaAppState extends ChangeNotifier {
 
   void makeRecords(RequestData requestData) {
     openedCells.add(requestData.header);
+    _currentPosition = requestData.num;
     notifyListeners();
   }
 
@@ -111,8 +117,10 @@ class LeelaAppState extends ChangeNotifier {
     return requestByNumber;
   }
 
-  void markOpenTime() {
-    openingTime = true;
-    // notifyListeners();
+
+  void setPlayZoneSize(Size size) {
+    this._playZoneSize = size;
+    notifyListeners();
   }
+
 }
