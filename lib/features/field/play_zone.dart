@@ -1,4 +1,4 @@
-import 'package:Leela/features/field/pointer.dart';
+import 'package:Leela/features/field/marker.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_loader.dart';
 import 'package:flutter/material.dart';
@@ -26,14 +26,6 @@ class _PlayZoneState extends State<PlayZone> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // context.findRenderObject()?.
-      var findRenderObject =
-          zoneKey.currentContext?.findRenderObject() as RenderBox;
-      var playZoneSize = findRenderObject.size;
-      var state = Provider.of<LeelaAppState>(context, listen: false);
-      state.setPlayZoneSize(playZoneSize);
-    });
   }
 
   List<GameRow> buildRows(requests) {
@@ -42,9 +34,7 @@ class _PlayZoneState extends State<PlayZone> {
     List<GameRow> rows = [];
     for (var j = 1; j < 9; ++j) {
       var requestsOfRow = requests.getRange(startPos, endPos).toList();
-      var gameRow = GameRow(requestsOfRow, j % 2 == 0);
-
-      rows.add(gameRow);
+      rows.add(GameRow(requestsOfRow, j % 2 == 0));
       startPos -= 9;
       endPos -= 9;
     }
@@ -53,36 +43,64 @@ class _PlayZoneState extends State<PlayZone> {
 
   @override
   Widget build(BuildContext context) {
-    // final playZoneKey = context.watch<LeelaAppState>().playZoneKey;
+    //Игровое поле
     return Expanded(
-      child: Stack(
-          children: [
-        Container(
-            decoration: BoxDecoration(border: Border.all(color: Colors.brown)),
-            key: zoneKey,
-            child: Column(
-              children: buildRows(requestsData),
-            )),
-        Pointer(),
-      ]),
+      // child: Stack(children: [
+      child: NotificationListener<SizeChangedLayoutNotification>(
+        onNotification: makeSomeStuff,
+        child: SizeChangedLayoutNotifier(
+          child: Stack(children: [
+
+            Marker(),
+            Container(
+                key: zoneKey,
+                decoration: BoxDecoration(border: Border.all(color: Colors.brown)),
+                child: Column(
+                  children: buildRows(requestsData),
+                )),
+
+          ]),
+        ),
+      ),
+      // Pointer(),
+      // ]
     );
+  }
+
+  bool makeSomeStuff(notification) {
+    print('size changed');
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   print("CHANGED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    //   var renderObj = zoneKey.currentContext?.findRenderObject() as RenderBox;
+    //   var newSize = renderObj.size;
+    //   var newPosition = renderObj.localToGlobal(Offset.zero);
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      var state = Provider.of<LeelaAppState>(context, listen: false);
+      state.moveMarkerNotification();
+
+      // Add Your Code here.
+
+    });
+
+    // });
+    return true;
   }
 }
 
 class GameRow extends StatelessWidget {
   final List<RequestData> requestsOfRow;
   final bool isDirectSequence;
-  List<Widget> cards = [];
+  List<Widget> cells = [];
 
   GameRow(List<RequestData> this.requestsOfRow, bool this.isDirectSequence,
       {Key? key})
       : super(key: key) {
-    cards = createRowSequence(isDirectSequence);
+    cells = createRowSequence(isDirectSequence);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: cards);
+    return Expanded(child: Row(children: cells));
   }
 
   List<Widget> createRowSequence(bool isDirectSequence) {
@@ -91,7 +109,7 @@ class GameRow extends StatelessWidget {
     // double cellWidth = playZoneSize.width;
     var sequence = isDirectSequence ? requestsOfRow : requestsOfRow.reversed;
     for (var req in sequence) {
-      cells.add(CellField(req));
+      cells.add(GameCell(req));
     }
     return cells;
   }

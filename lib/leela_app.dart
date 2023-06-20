@@ -34,22 +34,26 @@ class _LeelaAppState extends State<LeelaApp> {
 }
 
 class LeelaAppState extends ChangeNotifier {
-
   final _playZoneKey = GlobalKey();
+  Offset _playZonePosition = Offset.zero;
+  RequestData? _currentCell;
+
   get playZoneKey => _playZoneKey;
   Size _playZoneSize = Size(50, 100);
+
   Size get playZoneSize => _playZoneSize;
-  var current = WordPair.random();
+
+  // var current = WordPair.random();
   var favArray = <WordPair>[];
   List<int> _diceScores = []; //Последовательность выпавших очков
   List<String> openedCells = [];
   int _currentPosition = 0;
   Set<int> _openedCells = Set();
-  bool openingTime = false;
   Offset _markerPos = Offset(0, 0);
 
   int get currentPosition => _currentPosition;
-  Offset get markerPos => _markerPos;
+
+  Offset get currentMarkerPosition => _markerPos;
 
   void setMarkerPos(Offset value) {
     _markerPos = value;
@@ -59,7 +63,6 @@ class LeelaAppState extends ChangeNotifier {
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
 
   void getNextWords() {
-    current = WordPair.random();
     notifyListeners();
   }
 
@@ -87,40 +90,48 @@ class LeelaAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<RequestData> throwDice() async{
+  Future<RequestData> throwDice() async {
     var random = Random().nextInt(5) + 1;
     _diceScores.add(random);
-    print('Была позиция $_currentPosition, выпало $random, стала ${_currentPosition + random}');
+    print(
+        'Была позиция $_currentPosition, выпало $random, стала ${_currentPosition + random}');
     _currentPosition += random;
     //todo: change to log
     _openedCells.add(_currentPosition);
+
     var request = await getRequestByNumber(_currentPosition);
     openRequest(request);
+    // currentRequest = request;
+    _currentCell = request;
     notifyListeners();
     return request;
   }
 
   void openRequest(RequestData request) async {
-    // if (currentPosition > 0) {
-      // var requests = await Requests.getRequests();
-      // var reqToOpen = requests.firstWhere((element) => element.num == currentPosition);
-      request.isOpen = true;
-      openedCells.add(request.header);
-      notifyListeners();
-      // return reqToOpen;
-    // }
+    request.isOpen = true;
+    openedCells.add(request.header);
+    notifyListeners();
   }
 
   Future<RequestData> getRequestByNumber(int number) async {
     var requests = await Requests.getRequests();
-    var requestByNumber = requests.firstWhere((element) => element.num == number);
+    var requestByNumber =
+        requests.firstWhere((element) => element.num == number);
     return requestByNumber;
   }
 
-
-  void setPlayZoneSize(Size size) {
-    this._playZoneSize = size;
+  void definePlayZoneParameters(Size playZone, Offset playzonePosition) {
+    this._playZoneSize = playZone;
+    this._playZonePosition = playzonePosition;
     notifyListeners();
   }
 
+  void moveMarkerNotification() {
+    if (_currentCell?.cellKey?.currentContext != null) {
+      var renderBox = _currentCell?.cellKey?.currentContext?.findRenderObject()
+          as RenderBox;
+      _markerPos = renderBox.localToGlobal(Offset.zero);
+      notifyListeners();
+    }
+  }
 }

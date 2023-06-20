@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/src/widgets/framework.dart';
 
 class Requests {
   static List<RequestData> _requests = [];
@@ -28,6 +29,15 @@ class RequestData {
   final String description;
   bool isOpen = false;
   final int num;
+  GlobalKey? _cellKey;
+
+  GlobalKey? get cellKey => _cellKey;
+
+  set cellKey(GlobalKey? value) {
+    _cellKey = value;
+  }
 
   RequestData(this.header, this.asset_name, this.description, this.num);
+
+
 }
