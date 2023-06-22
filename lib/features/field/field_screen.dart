@@ -31,7 +31,11 @@ class _FieldWidgetState extends State<FieldWidget> {
             return Scaffold(
               body: Container(
                 child: Column(
-                  children: [OverlayInfo(), PlayZone(requestsData), PlayerInput()],
+                  children: [
+                    // OverlayInfo(),
+                    PlayZone(requestsData),
+                    PlayerInput()
+                  ],
                   // mainAxisAlignment: MainAxisAlignment.end,
                 ),
                 decoration: BoxDecoration(

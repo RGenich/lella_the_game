@@ -16,16 +16,21 @@ class _MarkerState extends State<Marker> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
-    var currentMarkerPosition = appState.currentMarkerPosition;
+    var positionToMove = appState.currentMarkerPosition;
+    var cellSize = appState.currentMarkerSize;
 
     return Positioned(
+        width: cellSize.width,
+        height: cellSize.height,
         // left: markerOffset.dx,
-        left: currentMarkerPosition.dx,
+        left: positionToMove.dx,
         // top: markerOffset.dy,
-        top: currentMarkerPosition.dy,
+        top: positionToMove.dy,
         child: Container(
-          // width: playzoneWidth / 8,
-          child: Lottie.asset('assets/lotties/point.json'),
+          child: Lottie.asset(
+              'assets/lotties/point.json',
+            fit: BoxFit.contain
+          ),
         ));
   }
 }

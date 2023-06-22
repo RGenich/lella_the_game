@@ -20,8 +20,8 @@ class _GameOverlayState extends State<GameOverlay> {
         color: Colors.transparent,
         child: Stack(children: [
           Positioned(
-            top: 30,
-            left: 30,
+            // top: 30,
+            // left: 30,
             child: ScoreDisplay(game),
           ),
         ]));

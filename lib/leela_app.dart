@@ -38,6 +38,8 @@ class LeelaAppState extends ChangeNotifier {
   Offset _playZonePosition = Offset.zero;
   RequestData? _currentCell;
 
+  Size _markerSize = Size(0, 0);
+
   get playZoneKey => _playZoneKey;
   Size _playZoneSize = Size(50, 100);
 
@@ -54,6 +56,7 @@ class LeelaAppState extends ChangeNotifier {
   int get currentPosition => _currentPosition;
 
   Offset get currentMarkerPosition => _markerPos;
+  Size get currentMarkerSize => _markerSize;
 
   void setMarkerPos(Offset value) {
     _markerPos = value;
@@ -98,11 +101,10 @@ class LeelaAppState extends ChangeNotifier {
     _currentPosition += random;
     //todo: change to log
     _openedCells.add(_currentPosition);
-
     var request = await getRequestByNumber(_currentPosition);
     openRequest(request);
-    // currentRequest = request;
     _currentCell = request;
+    defineMarkerSizeAndPosition();
     notifyListeners();
     return request;
   }
@@ -120,18 +122,17 @@ class LeelaAppState extends ChangeNotifier {
     return requestByNumber;
   }
 
-  void definePlayZoneParameters(Size playZone, Offset playzonePosition) {
-    this._playZoneSize = playZone;
-    this._playZonePosition = playzonePosition;
-    notifyListeners();
-  }
-
-  void moveMarkerNotification() {
+  void markerNotification() {
     if (_currentCell?.cellKey?.currentContext != null) {
-      var renderBox = _currentCell?.cellKey?.currentContext?.findRenderObject()
-          as RenderBox;
-      _markerPos = renderBox.localToGlobal(Offset.zero);
+      defineMarkerSizeAndPosition();
       notifyListeners();
     }
+  }
+
+  defineMarkerSizeAndPosition(){
+    var renderBox = _currentCell?.cellKey?.currentContext?.findRenderObject()
+    as RenderBox;
+    _markerPos = renderBox.localToGlobal(Offset.zero);
+    _markerSize = renderBox.size;
   }
 }

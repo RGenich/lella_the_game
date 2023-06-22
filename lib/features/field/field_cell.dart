@@ -47,8 +47,6 @@ class _GameCellState extends State<GameCell> {
         builder: (BuildContext context, BoxConstraints constraints) {
           return Container(
               key: cellKey,
-              // height: (height - 2) / 8,
-              // width: (width - 2) / 9,
               decoration: BoxDecoration(
                   border: Border.all(color: cellColor), color: cellColor),
               child: InkWell(
@@ -63,8 +61,7 @@ class _GameCellState extends State<GameCell> {
                   },
                   child: Align(
                       child: Text(
-                    // request.isOpen ? request.header : request.num.toString(),
-                    constraints.maxWidth.toString(),
+                    request.isOpen ? request.header : request.num.toString(),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 10.0),
                   ))));

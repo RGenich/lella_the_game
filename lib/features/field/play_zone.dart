@@ -45,9 +45,8 @@ class _PlayZoneState extends State<PlayZone> {
   Widget build(BuildContext context) {
     //Игровое поле
     return Expanded(
-      // child: Stack(children: [
       child: NotificationListener<SizeChangedLayoutNotification>(
-        onNotification: makeSomeStuff,
+        onNotification: sendNewMarkerPosition,
         child: SizeChangedLayoutNotifier(
           child: Stack(children: [
 
@@ -67,22 +66,12 @@ class _PlayZoneState extends State<PlayZone> {
     );
   }
 
-  bool makeSomeStuff(notification) {
+  bool sendNewMarkerPosition(notification) {
     print('size changed');
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   print("CHANGED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    //   var renderObj = zoneKey.currentContext?.findRenderObject() as RenderBox;
-    //   var newSize = renderObj.size;
-    //   var newPosition = renderObj.localToGlobal(Offset.zero);
     WidgetsBinding.instance.addPostFrameCallback((_){
       var state = Provider.of<LeelaAppState>(context, listen: false);
-      state.moveMarkerNotification();
-
-      // Add Your Code here.
-
+      state.markerNotification();
     });
-
-    // });
     return true;
   }
 }
