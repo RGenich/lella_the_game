@@ -35,17 +35,14 @@ class _LeelaAppState extends State<LeelaApp> {
 
 class LeelaAppState extends ChangeNotifier {
   final _playZoneKey = GlobalKey();
-  Offset _playZonePosition = Offset.zero;
+  bool _isAllowMove = false;
   RequestData? _currentCell;
-
   Size _markerSize = Size(0, 0);
 
   get playZoneKey => _playZoneKey;
   Size _playZoneSize = Size(50, 100);
 
   Size get playZoneSize => _playZoneSize;
-
-  // var current = WordPair.random();
   var favArray = <WordPair>[];
   List<int> _diceScores = []; //Последовательность выпавших очков
   List<String> openedCells = [];
@@ -56,6 +53,7 @@ class LeelaAppState extends ChangeNotifier {
   int get currentPosition => _currentPosition;
 
   Offset get currentMarkerPosition => _markerPos;
+
   Size get currentMarkerSize => _markerSize;
 
   void setMarkerPos(Offset value) {
@@ -94,12 +92,17 @@ class LeelaAppState extends ChangeNotifier {
   }
 
   Future<RequestData> throwDice() async {
-    var random = Random().nextInt(5) + 1;
+    var random = Random().nextInt(6) + 1;
     _diceScores.add(random);
-    print(
-        'Была позиция $_currentPosition, выпало $random, стала ${_currentPosition + random}');
+    if (!_isAllowMove && random == 6) {
+      _isAllowMove = true;
+    }
+    print('Была позиция $_currentPosition, выпало $random');
+
+    if (!_isAllowMove) random = 0;
+
     _currentPosition += random;
-    //todo: change to log
+    print('Новая позиция $_currentPosition');
     _openedCells.add(_currentPosition);
     var request = await getRequestByNumber(_currentPosition);
     openRequest(request);
@@ -129,9 +132,9 @@ class LeelaAppState extends ChangeNotifier {
     }
   }
 
-  void defineMarkerSizeAndPosition(){
-    var renderBox = _currentCell?.cellKey?.currentContext?.findRenderObject()
-    as RenderBox;
+  void defineMarkerSizeAndPosition() {
+    var renderBox =
+        _currentCell?.cellKey?.currentContext?.findRenderObject() as RenderBox;
     _markerPos = renderBox.localToGlobal(Offset.zero);
     _markerSize = renderBox.size;
     notifyListeners();

@@ -29,8 +29,8 @@ class _PlayZoneState extends State<PlayZone> {
   }
 
   List<GameRow> buildRows(requests) {
-    var startPos = 63;
-    var endPos = 72;
+    var startPos = 64;
+    var endPos = 73;
     List<GameRow> rows = [];
     for (var j = 1; j < 9; ++j) {
       var requestsOfRow = requests.getRange(startPos, endPos).toList();
@@ -94,8 +94,6 @@ class GameRow extends StatelessWidget {
 
   List<Widget> createRowSequence(bool isDirectSequence) {
     List<Widget> cells = [];
-    // double cellHeight = playZoneSize.height;
-    // double cellWidth = playZoneSize.width;
     var sequence = isDirectSequence ? requestsOfRow : requestsOfRow.reversed;
     for (var req in sequence) {
       cells.add(GameCell(req));
