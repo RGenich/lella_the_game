@@ -1,5 +1,5 @@
-import 'package:Leela/features/field/field_screen.dart';
-import 'package:Leela/features/request_list/view/requests_list_screen.dart';
+import 'package:Leela/widgets/field/field_screen.dart';
+import 'package:Leela/widgets/request_list/view/requests_list_screen.dart';
 import 'package:Leela/game/leela.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_loader.dart';

@@ -1,6 +1,6 @@
-import 'package:Leela/features/field/play_zone.dart';
-import 'package:Leela/features/field/interraction.dart';
-import 'package:Leela/features/field/overlay_data.dart';
+import 'package:Leela/widgets/field/play_zone.dart';
+import 'package:Leela/widgets/field/interraction.dart';
+import 'package:Leela/widgets/field/overlay_data.dart';
 import 'package:Leela/service/request_loader.dart';
 import 'package:flutter/material.dart';
 
