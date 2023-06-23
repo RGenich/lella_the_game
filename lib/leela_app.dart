@@ -60,7 +60,7 @@ class LeelaAppState extends ChangeNotifier {
 
   void setMarkerPos(Offset value) {
     _markerPos = value;
-    notifyListeners();
+    // notifyListeners();
   }
 
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
@@ -104,7 +104,7 @@ class LeelaAppState extends ChangeNotifier {
     var request = await getRequestByNumber(_currentPosition);
     openRequest(request);
     _currentCell = request;
-    defineMarkerSizeAndPosition();
+    // defineMarkerSizeAndPosition();
     notifyListeners();
     return request;
   }
@@ -129,10 +129,11 @@ class LeelaAppState extends ChangeNotifier {
     }
   }
 
-  defineMarkerSizeAndPosition(){
+  void defineMarkerSizeAndPosition(){
     var renderBox = _currentCell?.cellKey?.currentContext?.findRenderObject()
     as RenderBox;
     _markerPos = renderBox.localToGlobal(Offset.zero);
     _markerSize = renderBox.size;
+    notifyListeners();
   }
 }
