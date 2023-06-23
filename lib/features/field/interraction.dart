@@ -21,13 +21,12 @@ class PlayerInput extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: () async {
               var request = appState.throwDice();
+
               showDialog(
                   context: context,
                   builder: (context) {
-                    //TODO: ошибка здесь
-                    // appState.markOpenTime();
                     return MiniCard(request);
-                  });
+                  }).then((value) => print('CLSED'));
               // Navigator.of(context).pushNamed("/card", arguments: request);
             },
             label: Text('Go', style: textTheme.bodyLarge),

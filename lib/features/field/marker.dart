@@ -19,13 +19,12 @@ class _MarkerState extends State<Marker> {
     var positionToMove = appState.currentMarkerPosition;
     var cellSize = appState.currentMarkerSize;
 
-    return Positioned(
+    return AnimatedPositioned(
         width: cellSize.width,
         height: cellSize.height,
-        // left: markerOffset.dx,
         left: positionToMove.dx,
-        // top: markerOffset.dy,
         top: positionToMove.dy,
+        duration: Duration(seconds: 5),
         child: Container(
           child: Lottie.asset(
               'assets/lotties/point.json',
