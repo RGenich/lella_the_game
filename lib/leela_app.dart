@@ -34,31 +34,50 @@ class _LeelaAppState extends State<LeelaApp> {
 }
 
 class LeelaAppState extends ChangeNotifier {
+  Offset _startSnakePosition = Offset.zero;
+
+  get startSnakePos => _startSnakePosition;
+
+  Offset _endSnakePosition = Offset.zero;
+
+  get endSnakePos => _endSnakePosition;
+
+  Offset _directPosition = Offset.zero;
+
+  get directPosition => _directPosition;
+
   final _playZoneKey = GlobalKey();
-  bool _isAllowMove = false;
-  RequestData? _currentCell;
-  Size _markerSize = Size(0, 0);
 
   get playZoneKey => _playZoneKey;
   Size _playZoneSize = Size(50, 100);
 
   Size get playZoneSize => _playZoneSize;
-  var favArray = <WordPair>[];
-  List<int> _diceScores = []; //Последовательность выпавших очков
+
+  bool _isAllowMove = false;
+
+  //Последовательность выпавших очков
+  List<int> _diceScores = [];
   List<String> openedCells = [];
-  int _currentPosition = 0;
-  Set<int> _openedCells = Set();
-  Offset _markerPos = Offset(0, 0);
 
-  int get currentPosition => _currentPosition;
+  RequestData? _currentCell;
 
-  Offset get currentMarkerPosition => _markerPos;
+  Size _markerSize = Size(0, 0);
 
   Size get currentMarkerSize => _markerSize;
 
+  var favArray = <WordPair>[];
+
+  int _currentPosition = 0;
+
+  int get currentPosition => _currentPosition;
+
+  Set<int> _openedCells = Set();
+  Offset _markerPos = Offset(0, 0);
+
+  Offset get currentMarkerPosition => _markerPos;
+
   void setMarkerPos(Offset value) {
     _markerPos = value;
-    // notifyListeners();
   }
 
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
@@ -74,12 +93,6 @@ class LeelaAppState extends ChangeNotifier {
       favArray.add(favPair);
     }
     notifyListeners();
-  }
-
-  int buildNum = 0;
-
-  int getNextCellNumber() {
-    return buildNum;
   }
 
 //функция хранит какие отстроены клетки и
@@ -119,7 +132,7 @@ class LeelaAppState extends ChangeNotifier {
   }
 
   Future<RequestData> getRequestByNumber(int number) async {
-    var requests = await Requests.getRequests();
+    var requests = await RequestsLoader.getRequests();
     var requestByNumber =
         requests.firstWhere((element) => element.num == number);
     return requestByNumber;
@@ -138,5 +151,25 @@ class LeelaAppState extends ChangeNotifier {
     _markerPos = renderBox.localToGlobal(Offset.zero);
     _markerSize = renderBox.size;
     notifyListeners();
+  }
+
+  void addStartSnakePosition(Offset position) {
+    _startSnakePosition = position;
+    if (allPositionSet()) notifyListeners();
+  }
+
+  void addEndSnakePosition(Offset position) {
+    _endSnakePosition = position;
+    if (allPositionSet()) notifyListeners();
+  }
+
+  bool allPositionSet() {
+    return _startSnakePosition != Offset.zero &&
+        _endSnakePosition != Offset.zero;
+  }
+
+  void snakeNotification() {
+    _startSnakePosition =
+
   }
 }

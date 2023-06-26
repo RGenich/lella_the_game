@@ -4,6 +4,7 @@ import 'package:Leela/service/request_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'field_cell.dart';
+import 'snakes.dart';
 
 class PlayZone extends StatefulWidget {
   const PlayZone(List<RequestData> this.requestsData, {super.key});
@@ -19,13 +20,16 @@ class _PlayZoneState extends State<PlayZone> {
 
   // Size playZoneSize = Size(200, 100);
 
-  List<RequestData> requestsData;
+  List<RequestData> requests;
 
-  _PlayZoneState(List<RequestData> this.requestsData);
+  _PlayZoneState(List<RequestData> this.requests);
 
   @override
   void initState() {
     super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Provider.of<LeelaAppState>(context, listen: false).addSnakePosition();
+    // });
   }
 
   List<GameRow> buildRows(requests) {
@@ -49,15 +53,15 @@ class _PlayZoneState extends State<PlayZone> {
         onNotification: sendNewMarkerPosition,
         child: SizeChangedLayoutNotifier(
           child: Stack(children: [
-
-            Marker(),
             Container(
                 key: zoneKey,
-                decoration: BoxDecoration(border: Border.all(color: Colors.brown)),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.brown)),
                 child: Column(
-                  children: buildRows(requestsData),
+                  children: buildRows(requests),
                 )),
-
+            Marker(),
+            Snakes()
           ]),
         ),
       ),
@@ -68,9 +72,10 @@ class _PlayZoneState extends State<PlayZone> {
 
   bool sendNewMarkerPosition(notification) {
     print('size changed');
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       var state = Provider.of<LeelaAppState>(context, listen: false);
       state.markerNotification();
+      state.snakeNotification();
     });
     return true;
   }

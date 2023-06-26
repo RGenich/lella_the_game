@@ -15,7 +15,7 @@ class _ListOfRequestState extends State<ListOfRequest> {
   @override
   void initState() {
     super.initState();
-    req = Requests.getRequests();
+    req = RequestsLoader.getRequests();
   }
 
   @override
