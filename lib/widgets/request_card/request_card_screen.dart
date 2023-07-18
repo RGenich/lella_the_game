@@ -26,7 +26,7 @@ class RequestCard extends StatelessWidget {
                       child: Container(
                           child: Stack(children: [
                             Image.asset(
-                              'assets/images/${realRequest!.asset_name}.jpg',
+                              'assets/images/${realRequest.assetName}.jpg',
                               scale: 0.1,
                             ),
                             GestureDetector(
@@ -63,11 +63,14 @@ class RequestCard extends StatelessWidget {
                                 ])),
                         // color: Gradient.lerp(a, b, t),
                         child: SingleChildScrollView(
-                          child: RichText(
-                            textAlign: TextAlign.justify,
-                            text: TextSpan(
-                              style: theme.textTheme.bodyLarge,
-                              text: realRequest.description,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: RichText(
+                              textAlign: TextAlign.justify,
+                              text: TextSpan(
+                                style: theme.textTheme.bodyLarge,
+                                text: realRequest.description,
+                              ),
                             ),
                           ),
                         ))

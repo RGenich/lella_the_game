@@ -17,9 +17,11 @@ class _MarkerState extends State<Marker> {
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
     var positionToMove = appState.currentMarkerPosition;
-    var cellSize = appState.currentMarkerSize;
+    var cellSize = appState.currentCellSize;
 
-    return AnimatedPositioned(
+    return positionToMove == Offset.zero
+        ? SizedBox.shrink()
+        : AnimatedPositioned(
         width: cellSize.width,
         height: cellSize.height,
         left: positionToMove.dx,

@@ -58,13 +58,13 @@ class _MiniCardState extends State<MiniCard> {
                                 Image.asset(
                                   fit: BoxFit.fill,
                                   // opacity: const AlwaysStoppedAnimation(0.1),
-                                  'assets/images/${requestData.asset_name}.jpg',
+                                  'assets/images/${requestData.assetName}.jpg',
                                   scale: 0.1,
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text(
-                                      requestData.header,
+                                      "${requestData.num}. ${requestData.header}",
                                       textAlign: TextAlign.justify,
                                       style: txtTheme.headlineLarge),
                                 ),
@@ -86,7 +86,7 @@ class _MiniCardState extends State<MiniCard> {
                               padding: const EdgeInsets.all(12.0),
                               child: Text(requestData.description,
                                   textAlign: TextAlign.justify,
-                                  style: txtTheme.bodyMedium),
+                                  style: txtTheme.bodyLarge),
                             )
                           ]),
                         ]),

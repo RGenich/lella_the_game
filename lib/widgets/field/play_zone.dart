@@ -4,7 +4,7 @@ import 'package:Leela/service/request_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'field_cell.dart';
-import 'snakes.dart';
+import 'transfer.dart';
 
 class PlayZone extends StatefulWidget {
   const PlayZone(List<RequestData> this.requestsData, {super.key});
@@ -50,9 +50,11 @@ class _PlayZoneState extends State<PlayZone> {
     //Игровое поле
     return Expanded(
       child: NotificationListener<SizeChangedLayoutNotification>(
-        onNotification: sendNewMarkerPosition,
+        onNotification: rebuildPositions,
         child: SizeChangedLayoutNotifier(
           child: Stack(children: [
+
+            Snakes(),
             Container(
                 key: zoneKey,
                 decoration:
@@ -61,7 +63,6 @@ class _PlayZoneState extends State<PlayZone> {
                   children: buildRows(requests),
                 )),
             Marker(),
-            Snakes()
           ]),
         ),
       ),
@@ -70,12 +71,12 @@ class _PlayZoneState extends State<PlayZone> {
     );
   }
 
-  bool sendNewMarkerPosition(notification) {
+  bool rebuildPositions(notification) {
     print('size changed');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var state = Provider.of<LeelaAppState>(context, listen: false);
       state.markerNotification();
-      state.snakeNotification();
+      state.rereadSnakesCellPositions();
     });
     return true;
   }

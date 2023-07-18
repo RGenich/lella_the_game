@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:Leela/widgets/field/snakes.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/src/widgets/framework.dart';
 
@@ -7,18 +6,11 @@ class RequestData {
   GlobalKey? _cellKey;
   final int num;
   final String header;
-  final String asset_name;
+  final String assetName;
   final String description;
-  final int _endpoint;
+  // final int? _destination;
 
   GlobalKey? get cellKey => _cellKey;
-  SnakeType _snake;
-
-  SnakeType get snake => _snake;
-
-  int get endPoint => _endpoint;
-
-  set snake(SnakeType value) => _snake = value;
 
   bool isOpen = false;
 
@@ -26,13 +18,8 @@ class RequestData {
     _cellKey = value;
   }
 
-  RequestData(header, asset_name, description, num, snake)
-      : header = header,
-        asset_name = asset_name,
-        description = description,
-        num = num,
-        _snake = snake,
-        _endpoint = snake.endpoint;
+  RequestData(this.header, this.assetName, this.description, this.num);
+
 }
 
 class RequestsLoader {
@@ -45,13 +32,12 @@ class RequestsLoader {
         final decoded = json.decode(content);
         for (final item in decoded) {
           _requests.add(RequestData(
-              item['header'] as String,
-              item['asset_name'] as String,
-              item['description'] as String,
-              item['num'] as int,
-              SnakeType.values.byName(
-                item['snake'] != null ? item['snake'] : "good",
-              )));
+            item['header'] as String,
+            item['asset_name'] as String,
+            item['description'] as String,
+            item['num'] as int
+            // item['destination_num'] as int,
+          ));
         }
       } catch (e) {
         print('Проблема при десериализации запросов');
@@ -60,10 +46,4 @@ class RequestsLoader {
     return _requests;
   }
 
-  static RequestData? getRequestsWithEvil() {
-    for (var req in _requests) {
-      if (req._snake == SnakeType.evil) return req;
-    }
-    return null;
-  }
 }

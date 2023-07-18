@@ -1,6 +1,6 @@
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_loader.dart';
-import 'package:Leela/widgets/field/snakes.dart';
+import 'package:Leela/widgets/field/transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +19,7 @@ class _GameCellState extends State<GameCell> {
   Color cellColor = Color.fromRGBO(255, 255, 255, 0);
   final RequestData request;
   var cellKey = GlobalKey();
+  TransferType? currentCellType;
 
   _GameCellState(RequestData this.request) {
     request.cellKey = this.cellKey;
@@ -26,6 +27,12 @@ class _GameCellState extends State<GameCell> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      RenderBox cell = cellKey.currentContext?.findRenderObject() as RenderBox;
+      Size size = cell.size;
+      var appState = context.read<LeelaAppState>();
+      appState.setCurrentCellSize(size);
+    });
     super.initState();
   }
 
@@ -33,8 +40,7 @@ class _GameCellState extends State<GameCell> {
   Widget build(BuildContext context) {
     cellColor = request.isOpen ? openedColor : closedColor;
     var appState = context.read<LeelaAppState>();
-    var currentPosition = appState.currentPosition;
-
+    var currentPosition = appState.currentMarkerPos;
     if (request.isOpen && currentPosition == request.num) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         RenderBox cellRenderBox =
@@ -44,22 +50,16 @@ class _GameCellState extends State<GameCell> {
       });
     }
 
-    if (request.snake == SnakeType.evil) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        RenderBox cellRenderBox = cellKey.currentContext?.findRenderObject() as RenderBox;
-        var startPosition = cellRenderBox.localToGlobal(Offset.zero);
-        appState.addStartSnakePosition(startPosition);
-      });
+    for (var transferData in appState.allTransfers) {
+      if (transferData.startNum == request.num) {
+        addStartPositionAfterBuild(transferData, appState);
+        break;
+      }
+      if (transferData.endNum == request.num) {
+        addEndCellfterBuild(transferData, appState);
+        break;
+      }
     }
-
-    if (request.num == SnakeType.evil.endpoint) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        RenderBox cellRenderBox = cellKey.currentContext?.findRenderObject() as RenderBox;
-        var endSnakePos = cellRenderBox.localToGlobal(Offset.zero);
-        appState.addEndSnakePosition(endSnakePos);
-      });
-    }
-
     return Flexible(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -79,6 +79,7 @@ class _GameCellState extends State<GameCell> {
                   },
                   child: Align(
                       child: Text(
+                    // isDestinationCell ? "СЮДА" : "НЕТ",
                     request.isOpen ? request.header : request.num.toString(),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 10.0),
@@ -86,5 +87,19 @@ class _GameCellState extends State<GameCell> {
         },
       ),
     );
+  }
+
+  void addStartPositionAfterBuild(Transfer snakeData, LeelaAppState appState) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      snakeData.addStartCellKeys(cellKey);
+      appState.notifySnakeIfReady();
+    });
+  }
+
+  void addEndCellfterBuild(Transfer snakeData, LeelaAppState appState) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      snakeData.addEndCellKeyAfterBuild(cellKey);
+      appState.notifySnakeIfReady();
+    });
   }
 }

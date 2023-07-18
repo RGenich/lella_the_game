@@ -3,9 +3,12 @@ import 'dart:math';
 import 'package:Leela/router/routes.dart';
 import 'package:Leela/service/request_loader.dart';
 import 'package:Leela/theme/theme.dart';
+import 'package:Leela/widgets/field/transfer.dart';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
+
 
 class LeelaApp extends StatefulWidget {
   const LeelaApp({super.key});
@@ -34,43 +37,58 @@ class _LeelaAppState extends State<LeelaApp> {
 }
 
 class LeelaAppState extends ChangeNotifier {
-  Offset _startSnakePosition = Offset.zero;
+  List<Transfer> allTransfers = [
+    Transfer(12, 8, TransferType.SNAKE),
+    Transfer(16, 4, TransferType.SNAKE),
+    Transfer(24, 7, TransferType.SNAKE),
+    Transfer(29, 6, TransferType.SNAKE),
+    Transfer(44, 9, TransferType.SNAKE),
+    Transfer(52, 35, TransferType.SNAKE),
+    Transfer(55, 3, TransferType.SNAKE),
+    Transfer(61, 13, TransferType.SNAKE),
+    Transfer(63, 2, TransferType.SNAKE),
+    Transfer(72, 51, TransferType.SNAKE),
 
-  get startSnakePos => _startSnakePosition;
-
-  Offset _endSnakePosition = Offset.zero;
-
-  get endSnakePos => _endSnakePosition;
+    Transfer(10, 23, TransferType.ARROW),
+    Transfer(17, 69, TransferType.ARROW),
+    Transfer(20, 32, TransferType.ARROW),
+    Transfer(22, 60, TransferType.ARROW),
+    Transfer(27, 41, TransferType.ARROW),
+    Transfer(28, 50, TransferType.ARROW),
+    Transfer(37, 66, TransferType.ARROW),
+    Transfer(45, 67, TransferType.ARROW),
+    Transfer(46, 62, TransferType.ARROW),
+    Transfer(54, 68, TransferType.ARROW),
+  ];
 
   Offset _directPosition = Offset.zero;
 
   get directPosition => _directPosition;
-
   final _playZoneKey = GlobalKey();
 
   get playZoneKey => _playZoneKey;
   Size _playZoneSize = Size(50, 100);
 
   Size get playZoneSize => _playZoneSize;
-
   bool _isAllowMove = false;
 
   //Последовательность выпавших очков
   List<int> _diceScores = [];
   List<String> openedCells = [];
-
   RequestData? _currentCell;
 
-  Size _markerSize = Size(0, 0);
+  Size _cellSize = Size(0, 0);
 
-  Size get currentMarkerSize => _markerSize;
+  Size get currentCellSize => _cellSize;
+
+  void setCurrentCellSize(Size size) {
+    _cellSize = size;
+  }
 
   var favArray = <WordPair>[];
-
   int _currentPosition = 0;
 
-  int get currentPosition => _currentPosition;
-
+  int get currentMarkerPos => _currentPosition;
   Set<int> _openedCells = Set();
   Offset _markerPos = Offset(0, 0);
 
@@ -117,6 +135,18 @@ class LeelaAppState extends ChangeNotifier {
     _currentPosition += random;
     print('Новая позиция $_currentPosition');
     _openedCells.add(_currentPosition);
+    // allTransfers.f
+    Transfer? transfer = allTransfers
+        .firstWhereOrNull((element) => element.startNum == _currentPosition);
+
+    if (transfer!=null) {
+      transfer.isVisible = true;
+      print('Snake! New position: ${transfer.endNum}');
+      _currentPosition = transfer.endNum;
+      _openedCells.add(_currentPosition);
+      // notifySnakeIfReady();
+    }
+
     var request = await getRequestByNumber(_currentPosition);
     openRequest(request);
     _currentCell = request;
@@ -140,36 +170,51 @@ class LeelaAppState extends ChangeNotifier {
 
   void markerNotification() {
     if (_currentCell?.cellKey?.currentContext != null) {
-      defineMarkerSizeAndPosition();
+      defineCellSizeAndMarkerPosition();
       notifyListeners();
     }
   }
 
-  void defineMarkerSizeAndPosition() {
-    var renderBox =
-        _currentCell?.cellKey?.currentContext?.findRenderObject() as RenderBox;
-    _markerPos = renderBox.localToGlobal(Offset.zero);
-    _markerSize = renderBox.size;
-    notifyListeners();
+  void defineCellSizeAndMarkerPosition() {
+    if (_isAllowMove) {
+      var renderBox = _currentCell?.cellKey?.currentContext?.findRenderObject()
+          as RenderBox;
+      _markerPos = renderBox.localToGlobal(Offset.zero);
+      _cellSize = renderBox.size;
+      notifyListeners();
+    }
   }
 
-  void addStartSnakePosition(Offset position) {
-    _startSnakePosition = position;
-    if (allPositionSet()) notifyListeners();
+  void notifySnakeIfReady() {
+    bool hasUnready = allTransfers
+        .any((element) => element.startPos == null && element.endPos == null);
+    if (!hasUnready) {
+      // for (var snake in allSnakes) {
+      //     var start = getPositionByKey(snake.startKey);
+      //     snake.startPos = start;
+      //     var end = getPositionByKey(snake.endCellKey);
+      //     snake.endPos = end;
+      // }
+      notifyListeners();
+    }
   }
 
-  void addEndSnakePosition(Offset position) {
-    _endSnakePosition = position;
-    if (allPositionSet()) notifyListeners();
-  }
-
-  bool allPositionSet() {
-    return _startSnakePosition != Offset.zero &&
-        _endSnakePosition != Offset.zero;
-  }
-
-  void snakeNotification() {
-    _startSnakePosition =
-
+  void rereadSnakesCellPositions() {
+    for (var transferData in allTransfers) {
+      transferData.endPos = getPositionByKey(transferData.endCellKey);
+      transferData.startPos = getPositionByKey(transferData.startCellKey);
+    }
+    notifySnakeIfReady();
   }
 }
+
+Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? endCellKey) {
+  RenderBox cellRenderBox =
+      endCellKey?.currentContext?.findRenderObject() as RenderBox;
+  return cellRenderBox.localToGlobal(Offset.zero);
+}
+
+// class Pair {
+//   Offset? startPos;
+//   Offset? endPos;
+// }

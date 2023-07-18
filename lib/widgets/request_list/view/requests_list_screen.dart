@@ -27,34 +27,37 @@ class _ListOfRequestState extends State<ListOfRequest> {
         future: req,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            return ListView(
-              scrollDirection: Axis.vertical,
-              children: [
-                for (var realReq in snapshot.requireData)
-                  ListTile(
-                    shape: Border(
-                        bottom: BorderSide(color: Colors.white, width: 0.1)),
-                    trailing: Icon(Icons.arrow_forward_ios),
-                    title: Text(realReq.header, style: textTheme.bodyMedium),
-                    contentPadding: EdgeInsets.all(5.0),
-                    subtitle: Text(
-                      realReq.description.substring(
-                          0,
-                          realReq.description.length > 100
-                              ? 100
-                              : realReq.description.length),
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .bodySmall,
-                    ),
-                    // hoverColor: Colors.amber.shade700,
-                    onTap: () {
-                      Navigator.of(context).pushNamed("/card", arguments: Future<RequestData>.value(realReq));
-                    },
-                    // },
-                  )
-              ],
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: [
+                  for (var realReq in snapshot.requireData)
+                    ListTile(
+                      shape: Border(
+                          bottom: BorderSide(color: Colors.white, width: 0.1)),
+                      trailing: Icon(Icons.arrow_forward_ios),
+                      title: Text('${realReq.num}. ${realReq.header}', style: textTheme.bodyMedium),
+                      contentPadding: EdgeInsets.all(5.0),
+                      subtitle: Text(
+                        realReq.description.substring(
+                            0,
+                            realReq.description.length > 100
+                                ? 100
+                                : realReq.description.length),
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodySmall,
+                      ),
+                      // hoverColor: Colors.amber.shade700,
+                      onTap: () {
+                        Navigator.of(context).pushNamed("/card", arguments: Future<RequestData>.value(realReq));
+                      },
+                      // },
+                    )
+                ],
+              ),
             );
           }
         if (snapshot.hasError)
