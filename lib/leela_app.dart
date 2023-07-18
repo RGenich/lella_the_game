@@ -122,7 +122,7 @@ class LeelaAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<RequestData> throwDice() async {
+  RequestData throwDice() {
     var random = Random().nextInt(6) + 1;
     _diceScores.add(random);
     if (!_isAllowMove && random == 6) {
@@ -131,11 +131,9 @@ class LeelaAppState extends ChangeNotifier {
     print('Была позиция $_currentPosition, выпало $random');
 
     if (!_isAllowMove) random = 0;
-
     _currentPosition += random;
     print('Новая позиция $_currentPosition');
     _openedCells.add(_currentPosition);
-    // allTransfers.f
     Transfer? transfer = allTransfers
         .firstWhereOrNull((element) => element.startNum == _currentPosition);
 
@@ -155,7 +153,7 @@ class LeelaAppState extends ChangeNotifier {
     return request;
   }
 
-  void openRequest(RequestData request) async {
+  void openRequest(RequestData request) {
     request.isOpen = true;
     openedCells.add(request.header);
     notifyListeners();
