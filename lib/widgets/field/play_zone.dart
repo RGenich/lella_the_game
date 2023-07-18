@@ -7,37 +7,22 @@ import 'field_cell.dart';
 import 'transfer.dart';
 
 class PlayZone extends StatefulWidget {
-  const PlayZone(List<RequestData> this.requestsData, {super.key});
-
-  final List<RequestData> requestsData;
 
   @override
-  State<PlayZone> createState() => _PlayZoneState(requestsData);
+  State<PlayZone> createState() => _PlayZoneState();
 }
 
 class _PlayZoneState extends State<PlayZone> {
   var zoneKey = GlobalKey();
 
-  // Size playZoneSize = Size(200, 100);
+  _PlayZoneState();
 
-  List<RequestData> requests;
-
-  _PlayZoneState(List<RequestData> this.requests);
-
-  @override
-  void initState() {
-    super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Provider.of<LeelaAppState>(context, listen: false).addSnakePosition();
-    // });
-  }
-
-  List<GameRow> buildRows(requests) {
+  List<GameRow> buildRows() {
     var startPos = 64;
     var endPos = 73;
     List<GameRow> rows = [];
     for (var j = 1; j < 9; ++j) {
-      var requestsOfRow = requests.getRange(startPos, endPos).toList();
+      var requestsOfRow = RequestsLoader.requests.getRange(startPos, endPos).toList();
       rows.add(GameRow(requestsOfRow, j % 2 == 0));
       startPos -= 9;
       endPos -= 9;
@@ -53,14 +38,13 @@ class _PlayZoneState extends State<PlayZone> {
         onNotification: rebuildPositions,
         child: SizeChangedLayoutNotifier(
           child: Stack(children: [
-
             Snakes(),
             Container(
                 key: zoneKey,
                 decoration:
                     BoxDecoration(border: Border.all(color: Colors.brown)),
                 child: Column(
-                  children: buildRows(requests),
+                  children: buildRows(),
                 )),
             Marker(),
           ]),

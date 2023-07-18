@@ -147,7 +147,7 @@ class LeelaAppState extends ChangeNotifier {
       // notifySnakeIfReady();
     }
 
-    var request = await getRequestByNumber(_currentPosition);
+    var request = getRequestByNumber(_currentPosition);
     openRequest(request);
     _currentCell = request;
     // defineMarkerSizeAndPosition();
@@ -161,8 +161,8 @@ class LeelaAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<RequestData> getRequestByNumber(int number) async {
-    var requests = await RequestsLoader.getRequests();
+  RequestData getRequestByNumber(int number)  {
+    List<RequestData> requests = RequestsLoader.requests;
     var requestByNumber =
         requests.firstWhere((element) => element.num == number);
     return requestByNumber;

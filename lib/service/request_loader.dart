@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:ui';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/src/widgets/framework.dart';
 
 class RequestData {
@@ -23,7 +21,7 @@ class RequestData {
 }
 
 class RequestsLoader {
-  static List<RequestData> _requests = [
+  static List<RequestData> requests = [
     RequestData("Твой запрос говно", "newborning", "Ты лох", 0),
     RequestData(
         "Рождение",
