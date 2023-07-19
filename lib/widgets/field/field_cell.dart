@@ -3,6 +3,7 @@ import 'package:Leela/service/request_loader.dart';
 import 'package:Leela/widgets/field/transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
 
 class GameCell extends StatefulWidget {
   final RequestData request;
@@ -41,6 +42,12 @@ class _GameCellState extends State<GameCell> {
     cellColor = request.isOpen ? openedColor : closedColor;
     var appState = context.read<LeelaAppState>();
     var currentPosition = appState.currentMarkerPos;
+    // var pathForMarker = appState.pathForMarker;
+    // List<int> unvisitedNums = selectAllUnvisited(pathForMarker);
+    // if (unvisitedNums.contains(request.num)) {
+    //   pathForMarker[request.num]=false;
+    //   request.cellKey
+    // }
     if (request.isOpen && currentPosition == request.num) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         RenderBox cellRenderBox =
@@ -101,5 +108,10 @@ class _GameCellState extends State<GameCell> {
       snakeData.addEndCellKeyAfterBuild(cellKey);
       appState.notifySnakeIfReady();
     });
+  }
+
+ List<int> selectAllUnvisited(Map<int, bool> pathForMarker) {
+    return List.of(pathForMarker.entries
+        .where((element) => element.value == false).map((e) => e.key));
   }
 }

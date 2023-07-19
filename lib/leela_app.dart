@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 
-
 class LeelaApp extends StatefulWidget {
   const LeelaApp({super.key});
 
@@ -48,7 +47,6 @@ class LeelaAppState extends ChangeNotifier {
     Transfer(61, 13, TransferType.SNAKE),
     Transfer(63, 2, TransferType.SNAKE),
     Transfer(72, 51, TransferType.SNAKE),
-
     Transfer(10, 23, TransferType.ARROW),
     Transfer(17, 69, TransferType.ARROW),
     Transfer(20, 32, TransferType.ARROW),
@@ -74,7 +72,6 @@ class LeelaAppState extends ChangeNotifier {
 
   //Последовательность выпавших очков
   List<int> _diceScores = [];
-  List<String> openedCells = [];
   RequestData? _currentCell;
 
   Size _cellSize = Size(0, 0);
@@ -86,10 +83,9 @@ class LeelaAppState extends ChangeNotifier {
   }
 
   var favArray = <WordPair>[];
-  int _currentPosition = 0;
-
-  int get currentMarkerPos => _currentPosition;
-  Set<int> _openedCells = Set();
+  int _openedPosition = 0;
+  Map<int, bool> pathForMarker = {};
+  int get currentMarkerPos => _openedPosition;
   Offset _markerPos = Offset(0, 0);
 
   Offset get currentMarkerPosition => _markerPos;
@@ -117,8 +113,8 @@ class LeelaAppState extends ChangeNotifier {
 // возвращает какую надо построить следующей
 
   void makeRecords(RequestData requestData) {
-    openedCells.add(requestData.header);
-    _currentPosition = requestData.num;
+    // openedCells.add(requestData.header);
+    _openedPosition = requestData.num;
     notifyListeners();
   }
 
@@ -128,24 +124,26 @@ class LeelaAppState extends ChangeNotifier {
     if (!_isAllowMove && random == 6) {
       _isAllowMove = true;
     }
-    print('Была позиция $_currentPosition, выпало $random');
+    print('Была позиция $_openedPosition, выпало $random');
 
     if (!_isAllowMove) random = 0;
-    _currentPosition += random;
-    print('Новая позиция $_currentPosition');
-    _openedCells.add(_currentPosition);
-    Transfer? transfer = allTransfers
-        .firstWhereOrNull((element) => element.startNum == _currentPosition);
+    _openedPosition += random;
 
-    if (transfer!=null) {
+    print('Открыта клетка № $_openedPosition');
+    pathForMarker.addAll({_openedPosition:false});
+    // _openedCells.add(_openedPosition);
+    Transfer? transfer = allTransfers
+        .firstWhereOrNull((element) => element.startNum == _openedPosition);
+
+    if (transfer != null) {
       transfer.isVisible = true;
       print('Snake! New position: ${transfer.endNum}');
-      _currentPosition = transfer.endNum;
-      _openedCells.add(_currentPosition);
+      _openedPosition = transfer.endNum;
+      // _openedCells.add(_openedPosition);
       // notifySnakeIfReady();
     }
 
-    var request = getRequestByNumber(_currentPosition);
+    var request = getRequestByNumber(_openedPosition);
     openRequest(request);
     _currentCell = request;
     // defineMarkerSizeAndPosition();
@@ -155,11 +153,11 @@ class LeelaAppState extends ChangeNotifier {
 
   void openRequest(RequestData request) {
     request.isOpen = true;
-    openedCells.add(request.header);
+    // openedCells.add(request.header);
     notifyListeners();
   }
 
-  RequestData getRequestByNumber(int number)  {
+  RequestData getRequestByNumber(int number) {
     List<RequestData> requests = RequestsLoader.requests;
     var requestByNumber =
         requests.firstWhere((element) => element.num == number);
@@ -204,6 +202,11 @@ class LeelaAppState extends ChangeNotifier {
     }
     notifySnakeIfReady();
   }
+
+  void addRequestCellNum(int cellNum) {
+    pathForMarker.addAll({cellNum:false});
+  }
+
 }
 
 Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? endCellKey) {
