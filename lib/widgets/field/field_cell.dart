@@ -3,7 +3,6 @@ import 'package:Leela/service/request_loader.dart';
 import 'package:Leela/widgets/field/transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart';
 
 class GameCell extends StatefulWidget {
   final RequestData request;
@@ -41,19 +40,21 @@ class _GameCellState extends State<GameCell> {
   Widget build(BuildContext context) {
     cellColor = request.isOpen ? openedColor : closedColor;
     var appState = context.read<LeelaAppState>();
-    var currentPosition = appState.currentMarkerPos;
-    // var pathForMarker = appState.pathForMarker;
+    var currentPosition = appState.currentOpenPosition;
+    var pathForMarker = appState.pathForMarker;
     // List<int> unvisitedNums = selectAllUnvisited(pathForMarker);
     // if (unvisitedNums.contains(request.num)) {
     //   pathForMarker[request.num]=false;
     //   request.cellKey
     // }
-    if (request.isOpen && currentPosition == request.num) {
+    // if (request.isOpen && currentPosition == request.num) {
+    if (pathForMarker.contains(request.num)) {
+      pathForMarker.remove(request.num);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         RenderBox cellRenderBox =
             cellKey.currentContext?.findRenderObject() as RenderBox;
         var position = cellRenderBox.localToGlobal(Offset.zero);
-        appState.setMarkerPos(position);
+        appState.addMarkerPos(position);
       });
     }
 
@@ -110,8 +111,9 @@ class _GameCellState extends State<GameCell> {
     });
   }
 
- List<int> selectAllUnvisited(Map<int, bool> pathForMarker) {
+  List<int> selectAllUnvisited(Map<int, bool> pathForMarker) {
     return List.of(pathForMarker.entries
-        .where((element) => element.value == false).map((e) => e.key));
+        .where((element) => element.value == false)
+        .map((e) => e.key));
   }
 }

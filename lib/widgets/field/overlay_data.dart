@@ -12,11 +12,11 @@ class _OverlayInfoState extends State<OverlayInfo> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
-    var droppedFields = appState.openedCells;
+    // var droppedFields = appState.openedCells;
     int lastScore = appState.getLastDiceScore;
     return Row(
       children: [
-        Text('${droppedFields}'),
+        // Text('${droppedFields}'),
         Text(lastScore.toString())],
     );
   }

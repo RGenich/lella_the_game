@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:Leela/router/routes.dart';
@@ -72,7 +73,7 @@ class LeelaAppState extends ChangeNotifier {
 
   //Последовательность выпавших очков
   List<int> _diceScores = [];
-  RequestData? _currentCell;
+  Queue<RequestData> _currentCells = Queue();
 
   Size _cellSize = Size(0, 0);
 
@@ -84,14 +85,20 @@ class LeelaAppState extends ChangeNotifier {
 
   var favArray = <WordPair>[];
   int _openedPosition = 0;
-  Map<int, bool> pathForMarker = {};
-  int get currentMarkerPos => _openedPosition;
-  Offset _markerPos = Offset(0, 0);
+  Queue<int> pathForMarker = Queue();
 
-  Offset get currentMarkerPosition => _markerPos;
+  int get currentOpenPosition => _openedPosition;
+  Queue<Offset> _markerPosQueue = Queue();
 
-  void setMarkerPos(Offset value) {
-    _markerPos = value;
+  Offset? get getFirstMarkerPosition {
+    if (_markerPosQueue.isNotEmpty)
+      return _markerPosQueue.removeFirst();
+    else
+      return null;
+  }
+
+  void addMarkerPos(Offset value) {
+    _markerPosQueue.add(value);
   }
 
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
@@ -121,17 +128,26 @@ class LeelaAppState extends ChangeNotifier {
   RequestData throwDice() {
     var random = Random().nextInt(6) + 1;
     _diceScores.add(random);
-    if (!_isAllowMove && random == 6) {
-      _isAllowMove = true;
-    }
+    //TODO: return only for six?
+    // if (!_isAllowMove && random == 6) {
+    _isAllowMove = true;
+    // }
     print('Была позиция $_openedPosition, выпало $random');
 
     if (!_isAllowMove) random = 0;
     _openedPosition += random;
 
     print('Открыта клетка № $_openedPosition');
-    pathForMarker.addAll({_openedPosition:false});
+    pathForMarker.add(_openedPosition);
     // _openedCells.add(_openedPosition);
+
+    var request = getRequestByNumber(_openedPosition);
+
+    openRequest(request);
+    _currentCells.add(request);
+    Offset? position = request.position;
+    if (position != null) _markerPosQueue.add(position);
+
     Transfer? transfer = allTransfers
         .firstWhereOrNull((element) => element.startNum == _openedPosition);
 
@@ -139,13 +155,13 @@ class LeelaAppState extends ChangeNotifier {
       transfer.isVisible = true;
       print('Snake! New position: ${transfer.endNum}');
       _openedPosition = transfer.endNum;
+      RequestData requestByNumber = getRequestByNumber(_openedPosition);
+      Offset? position = requestByNumber.position;
+      if (position != null) _markerPosQueue.add(position);
       // _openedCells.add(_openedPosition);
       // notifySnakeIfReady();
     }
 
-    var request = getRequestByNumber(_openedPosition);
-    openRequest(request);
-    _currentCell = request;
     // defineMarkerSizeAndPosition();
     notifyListeners();
     return request;
@@ -165,17 +181,21 @@ class LeelaAppState extends ChangeNotifier {
   }
 
   void markerNotification() {
-    if (_currentCell?.cellKey?.currentContext != null) {
+    if (_currentCells.isNotEmpty &&
+        _currentCells.first.cellKey?.currentContext != null) {
       defineCellSizeAndMarkerPosition();
       notifyListeners();
     }
   }
 
   void defineCellSizeAndMarkerPosition() {
-    if (_isAllowMove) {
-      var renderBox = _currentCell?.cellKey?.currentContext?.findRenderObject()
-          as RenderBox;
-      _markerPos = renderBox.localToGlobal(Offset.zero);
+    while (_isAllowMove && _currentCells.isNotEmpty) {
+      var renderBox = _currentCells
+          .removeFirst()
+          .cellKey
+          ?.currentContext
+          ?.findRenderObject() as RenderBox;
+      _markerPosQueue.add(renderBox.localToGlobal(Offset.zero));
       _cellSize = renderBox.size;
       notifyListeners();
     }
@@ -204,9 +224,14 @@ class LeelaAppState extends ChangeNotifier {
   }
 
   void addRequestCellNum(int cellNum) {
-    pathForMarker.addAll({cellNum:false});
+    pathForMarker.add(cellNum);
   }
 
+  checkMoreMarkerPositions() {
+    if (_markerPosQueue.isNotEmpty) {
+      markerNotification();
+    }
+  }
 }
 
 Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? endCellKey) {

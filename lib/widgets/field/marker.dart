@@ -12,21 +12,24 @@ class Marker extends StatefulWidget {
 }
 
 class _MarkerState extends State<Marker> {
+  Offset markerPosition = Offset.zero;
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
-    var positionToMove = appState.currentMarkerPosition;
+    var newMarkerPosition = appState.getFirstMarkerPosition;
     var cellSize = appState.currentCellSize;
-
-    return positionToMove == Offset.zero
+    if (markerPosition!=newMarkerPosition && newMarkerPosition!=null)
+      markerPosition = newMarkerPosition;
+    return markerPosition == Offset.zero
         ? SizedBox.shrink()
         : AnimatedPositioned(
         width: cellSize.width,
         height: cellSize.height,
-        left: positionToMove.dx,
-        top: positionToMove.dy,
+        left: markerPosition.dx,
+        top: markerPosition.dy,
         duration: Duration(seconds: 5),
+        onEnd: ()=>{appState.checkMoreMarkerPositions()},
         child: Container(
           child: Lottie.asset(
               'assets/lotties/point.json',
