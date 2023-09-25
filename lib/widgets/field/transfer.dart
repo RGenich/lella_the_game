@@ -46,7 +46,8 @@ class _SnakesState extends State<Snakes> {
     var allSnakes = context.watch<LeelaAppState>().allTransfers;
     return Stack(children: [
       for (var snake in allSnakes)
-        if (snake.startPos!=null && snake.endPos!=null && snake.isVisible) TransferWidget(snake)
+        if (snake.startPos!=null && snake.endPos!=null && snake.isVisible)
+          TransferWidget(snake)
     ]);
   }
 }

@@ -60,7 +60,7 @@ class _PlayZoneState extends State<PlayZone> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var state = Provider.of<LeelaAppState>(context, listen: false);
       state.markerNotification();
-      state.rereadSnakesCellPositions();
+      // state.rereadSnakesCellPositions();
     });
     return true;
   }

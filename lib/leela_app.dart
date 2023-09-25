@@ -88,17 +88,16 @@ class LeelaAppState extends ChangeNotifier {
   Queue<int> pathForMarker = Queue();
 
   int get currentOpenPosition => _openedPosition;
-  Queue<Offset> _markerPosQueue = Queue();
+  Queue<Offset> _markerPositionQueue = Queue();
 
-  Offset? get getFirstMarkerPosition {
-    if (_markerPosQueue.isNotEmpty)
-      return _markerPosQueue.removeFirst();
-    else
-      return null;
+  Offset? get getNextMarkerPosition {
+    if (_markerPositionQueue.isNotEmpty)
+      return _markerPositionQueue.removeFirst();
+    else return null;
   }
 
   void addMarkerPos(Offset value) {
-    _markerPosQueue.add(value);
+    _markerPositionQueue.add(value);
   }
 
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
@@ -127,7 +126,7 @@ class LeelaAppState extends ChangeNotifier {
 
   RequestData throwDice() {
     var random = Random().nextInt(6) + 1;
-    _diceScores.add(random);
+    // _diceScores.add(random);
     //TODO: return only for six?
     // if (!_isAllowMove && random == 6) {
     _isAllowMove = true;
@@ -138,32 +137,12 @@ class LeelaAppState extends ChangeNotifier {
     _openedPosition += random;
 
     print('Открыта клетка № $_openedPosition');
-    pathForMarker.add(_openedPosition);
-    // _openedCells.add(_openedPosition);
-
     var request = getRequestByNumber(_openedPosition);
-
-    openRequest(request);
-    _currentCells.add(request);
     Offset? position = request.position;
-    if (position != null) _markerPosQueue.add(position);
-
-    Transfer? transfer = allTransfers
-        .firstWhereOrNull((element) => element.startNum == _openedPosition);
-
-    if (transfer != null) {
-      transfer.isVisible = true;
-      print('Snake! New position: ${transfer.endNum}');
-      _openedPosition = transfer.endNum;
-      RequestData requestByNumber = getRequestByNumber(_openedPosition);
-      Offset? position = requestByNumber.position;
-      if (position != null) _markerPosQueue.add(position);
-      // _openedCells.add(_openedPosition);
-      // notifySnakeIfReady();
-    }
-
+    if (position != null) addMarkerPos(position);
     // defineMarkerSizeAndPosition();
-    notifyListeners();
+    checkTransfer(request);
+    // notifyListeners();
     return request;
   }
 
@@ -181,66 +160,92 @@ class LeelaAppState extends ChangeNotifier {
   }
 
   void markerNotification() {
-    if (_currentCells.isNotEmpty &&
-        _currentCells.first.cellKey?.currentContext != null) {
-      defineCellSizeAndMarkerPosition();
-      notifyListeners();
-    }
+    notifyListeners();
+  //   if (_markerPositionQueue.isNotEmpty) notifyListeners();
+    // if (_currentCells.isNotEmpty &&
+    //     _currentCells.first.cellKey?.currentContext != null) {
+    //   defineCellSizeAndMarkerPosition();
   }
 
-  void defineCellSizeAndMarkerPosition() {
-    while (_isAllowMove && _currentCells.isNotEmpty) {
-      var renderBox = _currentCells
-          .removeFirst()
-          .cellKey
-          ?.currentContext
-          ?.findRenderObject() as RenderBox;
-      _markerPosQueue.add(renderBox.localToGlobal(Offset.zero));
-      _cellSize = renderBox.size;
-      notifyListeners();
-    }
-  }
-
-  void notifySnakeIfReady() {
-    bool hasUnready = allTransfers
-        .any((element) => element.startPos == null && element.endPos == null);
-    if (!hasUnready) {
-      // for (var snake in allSnakes) {
-      //     var start = getPositionByKey(snake.startKey);
-      //     snake.startPos = start;
-      //     var end = getPositionByKey(snake.endCellKey);
-      //     snake.endPos = end;
-      // }
-      notifyListeners();
-    }
-  }
-
-  void rereadSnakesCellPositions() {
-    for (var transferData in allTransfers) {
-      transferData.endPos = getPositionByKey(transferData.endCellKey);
-      transferData.startPos = getPositionByKey(transferData.startCellKey);
-    }
-    notifySnakeIfReady();
-  }
-
-  void addRequestCellNum(int cellNum) {
-    pathForMarker.add(cellNum);
-  }
-
-  checkMoreMarkerPositions() {
-    if (_markerPosQueue.isNotEmpty) {
-      markerNotification();
-    }
+void defineCellSizeAndMarkerPosition() {
+  while (_isAllowMove && _currentCells.isNotEmpty) {
+    var renderBox = _currentCells
+        .removeFirst()
+        .cellKey
+        ?.currentContext
+        ?.findRenderObject() as RenderBox;
+    _markerPositionQueue.add(renderBox.localToGlobal(Offset.zero));
+    _cellSize = renderBox.size;
+    notifyListeners();
   }
 }
 
-Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? endCellKey) {
-  RenderBox cellRenderBox =
-      endCellKey?.currentContext?.findRenderObject() as RenderBox;
-  return cellRenderBox.localToGlobal(Offset.zero);
+void notifySnakeIfReady() {
+  bool hasUnready = allTransfers
+      .any((element) => element.startPos == null && element.endPos == null);
+  if (!hasUnready) {
+    // for (var snake in allSnakes) {
+    //     var start = getPositionByKey(snake.startKey);
+    //     snake.startPos = start;
+    //     var end = getPositionByKey(snake.endCellKey);
+    //     snake.endPos = end;
+    // }
+    notifyListeners();
+  }
 }
 
+// void rereadSnakesCellPositions() {
+//   for (var transferData in allTransfers) {
+//     transferData.endPos = getPositionByKey(transferData.endCellKey);
+//     transferData.startPos = getPositionByKey(transferData.startCellKey);
+//   }
+//   notifySnakeIfReady();
+// }
+
+  checkUnvisitedMarkerPositions() {
+    print('more marker position cheking');
+    if (_markerPositionQueue.isNotEmpty) {
+      notifyListeners();
+    }
+  }
+
+  void checkTransfer(RequestData request) {
+    Transfer? transfer =
+        allTransfers.firstWhereOrNull((trans) => trans.startNum == request.num);
+
+    if (transfer != null) {
+      transfer.isVisible = true;
+      print('Snake! New end position: ${transfer.endNum}');
+      // _openedPosition = transfer.endNum;
+      RequestData requestByNumber = getRequestByNumber(transfer.endNum);
+      Offset? position = requestByNumber.position;
+      if (position != null) {
+        addMarkerPos(position);
+        _openedPosition = requestByNumber.num;
+      }
+      // notifyListeners();
+    }
+  }
+
+  Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? endCellKey) {
+    RenderBox cellRenderBox =
+        endCellKey?.currentContext?.findRenderObject() as RenderBox;
+    return cellRenderBox.localToGlobal(Offset.zero);
+  }
+
+  void setTransfersPosition(Offset position, int num) {
+    var foundTransfer = allTransfers.firstWhereOrNull((transfer) => transfer.startNum == num);
+    if (foundTransfer!=null) {
+      foundTransfer.startPos = position;
+      return;
+    }
+    foundTransfer = allTransfers.firstWhereOrNull((transfer) => transfer.endNum == num);
+    if (foundTransfer!=null) {
+      foundTransfer.endPos = position;
+    }
+  }
 // class Pair {
 //   Offset? startPos;
 //   Offset? endPos;
 // }
+}

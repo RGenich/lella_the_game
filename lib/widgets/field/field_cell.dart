@@ -28,10 +28,13 @@ class _GameCellState extends State<GameCell> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      RenderBox cell = cellKey.currentContext?.findRenderObject() as RenderBox;
-      Size size = cell.size;
+      RenderBox cellBox = cellKey.currentContext?.findRenderObject() as RenderBox;
+      Size size = cellBox.size;
+      var position = cellBox.localToGlobal(Offset.zero);
+      request.position = position;
       var appState = context.read<LeelaAppState>();
       appState.setCurrentCellSize(size);
+      appState.setTransfersPosition(position, request.num);
     });
     super.initState();
   }
@@ -48,26 +51,24 @@ class _GameCellState extends State<GameCell> {
     //   request.cellKey
     // }
     // if (request.isOpen && currentPosition == request.num) {
-    if (pathForMarker.contains(request.num)) {
-      pathForMarker.remove(request.num);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        RenderBox cellRenderBox =
-            cellKey.currentContext?.findRenderObject() as RenderBox;
-        var position = cellRenderBox.localToGlobal(Offset.zero);
-        appState.addMarkerPos(position);
-      });
-    }
+    //   pathForMarker.remove(request.num);
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     RenderBox cellRenderBox =
+    //         cellKey.currentContext?.findRenderObject() as RenderBox;
+    //     var position = cellRenderBox.localToGlobal(Offset.zero);
+    //     appState.addMarkerPos(position);
+    //   });
 
-    for (var transferData in appState.allTransfers) {
-      if (transferData.startNum == request.num) {
-        addStartPositionAfterBuild(transferData, appState);
-        break;
-      }
-      if (transferData.endNum == request.num) {
-        addEndCellfterBuild(transferData, appState);
-        break;
-      }
-    }
+    // for (var transferData in appState.allTransfers) {
+    //   if (transferData.startNum == request.num) {
+    //     addStartPositionAfterBuild(transferData, appState);
+    //     break;
+    //   }
+    //   if (transferData.endNum == request.num) {
+    //     addEndCellfterBuild(transferData, appState);
+    //     break;
+    //   }
+    // }
     return Flexible(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {

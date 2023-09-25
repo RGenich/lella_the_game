@@ -1,6 +1,8 @@
+import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class MiniCard extends StatefulWidget {
   final RequestData request;
@@ -13,7 +15,7 @@ class MiniCard extends StatefulWidget {
 
 class _MiniCardState extends State<MiniCard> {
   _MiniCardState(this.request);
-
+  var appState;
   bool expanded = false;
   double opacityLevel = 1.0;
   double opacityHeaderLevel = 0.0;
@@ -31,7 +33,7 @@ class _MiniCardState extends State<MiniCard> {
   @override
   Widget build(BuildContext context) {
     var txtTheme = Theme.of(context).textTheme;
-
+    appState = context.watch<LeelaAppState>();
     return LayoutBuilder(builder: (context, constraints) {
       var nonExpanded = constraints.maxHeight / 100 * 30;
       var expandedHeight = constraints.maxHeight / 100 * 85;
@@ -41,6 +43,7 @@ class _MiniCardState extends State<MiniCard> {
           height: expanded ? expandedHeight : nonExpanded,
           width: expanded ? constraints.maxWidth : nonExpanded,
           duration: Duration(seconds: 3),
+          // onEnd: ()=>{appState.checkUnvisitedMarkerPositions()},
           child: Card(
             borderOnForeground: true,
             shape: RoundedRectangleBorder(
@@ -92,5 +95,10 @@ class _MiniCardState extends State<MiniCard> {
         ),
       );
     });
+  }
+  @override
+  void dispose () {
+    print('dispose checking');
+    super.dispose();
   }
 }

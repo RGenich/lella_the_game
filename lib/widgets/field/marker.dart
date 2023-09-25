@@ -17,7 +17,7 @@ class _MarkerState extends State<Marker> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
-    var newMarkerPosition = appState.getFirstMarkerPosition;
+    var newMarkerPosition = appState.getNextMarkerPosition;
     var cellSize = appState.currentCellSize;
     if (markerPosition!=newMarkerPosition && newMarkerPosition!=null)
       markerPosition = newMarkerPosition;
@@ -29,7 +29,7 @@ class _MarkerState extends State<Marker> {
         left: markerPosition.dx,
         top: markerPosition.dy,
         duration: Duration(seconds: 5),
-        onEnd: ()=>{appState.checkMoreMarkerPositions()},
+        onEnd: ()=>{appState.checkUnvisitedMarkerPositions()},
         child: Container(
           child: Lottie.asset(
               'assets/lotties/point.json',
