@@ -3,6 +3,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../../leela_app.dart';
+import '../request_card/mini_card.dart';
 
 class Marker extends StatefulWidget {
   const Marker({super.key});
@@ -12,29 +13,43 @@ class Marker extends StatefulWidget {
 }
 
 class _MarkerState extends State<Marker> {
-  Offset markerPosition = Offset.zero;
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
+    Offset currentMarkerPosition = Offset.zero;
+    // appState.refreshCellPositions();
     var newMarkerPosition = appState.getNextMarkerPosition;
+
     var cellSize = appState.currentCellSize;
-    if (markerPosition!=newMarkerPosition && newMarkerPosition!=null)
-      markerPosition = newMarkerPosition;
-    return markerPosition == Offset.zero
-        ? SizedBox.shrink()
-        : AnimatedPositioned(
-        width: cellSize.width,
-        height: cellSize.height,
-        left: markerPosition.dx,
-        top: markerPosition.dy,
-        duration: Duration(seconds: 5),
-        onEnd: ()=>{appState.checkUnvisitedMarkerPositions()},
-        child: Container(
-          child: Lottie.asset(
-              'assets/lotties/point.json',
-            fit: BoxFit.contain
-          ),
-        ));
+    if (newMarkerPosition != null)
+      currentMarkerPosition = newMarkerPosition;
+    return
+      currentMarkerPosition == Offset.zero
+          ? SizedBox.shrink()
+          : AnimatedPositioned(
+          width: cellSize.width,
+          height: cellSize.height,
+          left: currentMarkerPosition.dx,
+          top: currentMarkerPosition.dy,
+          duration: Duration(seconds: 5),
+          onEnd: () {
+            appState.checkUnvisitedMarkerPositions();
+            showDialog<void>(
+                context: context,
+                builder: (context) {
+                  return MiniCard(request);
+                })
+            );
+          },
+          child: IgnorePointer(
+            // behavior: HitTestBehavior.translucent,
+            child: Container(
+              child: Lottie.asset(
+                  'assets/lotties/point.json',
+                  fit: BoxFit.contain
+              ),
+            ),
+          ));
   }
 }

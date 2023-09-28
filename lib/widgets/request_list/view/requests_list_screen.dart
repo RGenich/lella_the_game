@@ -1,4 +1,4 @@
-import 'package:Leela/service/request_loader.dart';
+import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
 
 class ListOfRequest extends StatefulWidget {
@@ -7,7 +7,7 @@ class ListOfRequest extends StatefulWidget {
 }
 
 class _ListOfRequestState extends State<ListOfRequest> {
-  List<RequestData> allRequests =   RequestsLoader.requests;
+  List<RequestData> allRequests =   RequestsKeeper.requests;
 
   @override
   Widget build(BuildContext context) {

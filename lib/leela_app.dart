@@ -2,7 +2,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:Leela/router/routes.dart';
-import 'package:Leela/service/request_loader.dart';
+import 'package:Leela/service/request_keeper.dart';
 import 'package:Leela/theme/theme.dart';
 import 'package:Leela/widgets/field/transfer.dart';
 import 'package:english_words/english_words.dart';
@@ -60,20 +60,21 @@ class LeelaAppState extends ChangeNotifier {
     Transfer(54, 68, TransferType.ARROW),
   ];
 
-  Offset _directPosition = Offset.zero;
+  // Offset _directPosition = Offset.zero;
 
-  get directPosition => _directPosition;
-  final _playZoneKey = GlobalKey();
-
-  get playZoneKey => _playZoneKey;
-  Size _playZoneSize = Size(50, 100);
-
-  Size get playZoneSize => _playZoneSize;
+  // get directPosition => _directPosition;
+  // final _playZoneKey = GlobalKey();
+  //
+  // get playZoneKey => _playZoneKey;
+  // Size _playZoneSize = Size(50, 100);
+  //
+  // Size get playZoneSize => _playZoneSize;
   bool _isAllowMove = false;
 
   //Последовательность выпавших очков
   List<int> _diceScores = [];
-  Queue<RequestData> _currentCells = Queue();
+
+  // Queue<RequestData> _currentCells = Queue();
 
   Size _cellSize = Size(0, 0);
 
@@ -84,126 +85,96 @@ class LeelaAppState extends ChangeNotifier {
   }
 
   var favArray = <WordPair>[];
-  int _openedPosition = 0;
+  int _currentNum = 0;
   Queue<int> pathForMarker = Queue();
 
-  int get currentOpenPosition => _openedPosition;
+  int get currentPosition => _currentNum;
+
   Queue<Offset> _markerPositionQueue = Queue();
 
+  Offset? lastMarkerPos = null;
+
   Offset? get getNextMarkerPosition {
+    if (!_isAllowMove) return getDefaultMarkerPosition();
     if (_markerPositionQueue.isNotEmpty)
       return _markerPositionQueue.removeFirst();
-    else return null;
+    else
+      return lastMarkerPos;
   }
 
-  void addMarkerPos(Offset value) {
-    _markerPositionQueue.add(value);
+  void addMarkerPos(Offset position) {
+    if (_markerPositionQueue.isEmpty || _markerPositionQueue.last != position)
+      _markerPositionQueue.add(position);
+    lastMarkerPos = position;
   }
 
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
-
-  void getNextWords() {
-    notifyListeners();
-  }
-
-  void addToFavorite(WordPair favPair) {
-    if (favArray.contains(favPair)) {
-      favArray.remove(favPair);
-    } else {
-      favArray.add(favPair);
-    }
-    notifyListeners();
-  }
 
 //функция хранит какие отстроены клетки и
 // возвращает какую надо построить следующей
 
   void makeRecords(RequestData requestData) {
     // openedCells.add(requestData.header);
-    _openedPosition = requestData.num;
+    _currentNum = requestData.num;
     notifyListeners();
   }
 
   RequestData throwDice() {
     var random = Random().nextInt(6) + 1;
-    // _diceScores.add(random);
     //TODO: return only for six?
-    // if (!_isAllowMove && random == 6) {
+    if (!_isAllowMove && random == 6) {
     _isAllowMove = true;
-    // }
-    print('Была позиция $_openedPosition, выпало $random');
+    }
+    print('Была позиция $_currentNum, выпало $random');
 
     if (!_isAllowMove) random = 0;
-    _openedPosition += random;
+    if (_currentNum + random <= 72) {
+      _currentNum += random;
 
-    print('Открыта клетка № $_openedPosition');
-    var request = getRequestByNumber(_openedPosition);
-    Offset? position = request.position;
-    if (position != null) addMarkerPos(position);
-    // defineMarkerSizeAndPosition();
-    checkTransfer(request);
-    // notifyListeners();
-    return request;
-  }
-
-  void openRequest(RequestData request) {
-    request.isOpen = true;
-    // openedCells.add(request.header);
-    notifyListeners();
+      var request = getRequestByNumber(_currentNum);
+      request.isOpen = true;
+      print('Открыта клетка № $_currentNum, ${request.header}');
+      Offset? position = request.position;
+      if (position != null) addMarkerPos(position);
+      checkTransfer(request);
+      return request;
+    } else {
+      print('Нужно кидать пока не выпадет 72');
+      return getRequestByNumber(-1);
+    }
   }
 
   RequestData getRequestByNumber(int number) {
-    List<RequestData> requests = RequestsLoader.requests;
+    List<RequestData> requests = RequestsKeeper.requests;
     var requestByNumber =
         requests.firstWhere((element) => element.num == number);
     return requestByNumber;
   }
 
-  void markerNotification() {
+  void notify() {
     notifyListeners();
-  //   if (_markerPositionQueue.isNotEmpty) notifyListeners();
-    // if (_currentCells.isNotEmpty &&
-    //     _currentCells.first.cellKey?.currentContext != null) {
-    //   defineCellSizeAndMarkerPosition();
   }
 
-void defineCellSizeAndMarkerPosition() {
-  while (_isAllowMove && _currentCells.isNotEmpty) {
-    var renderBox = _currentCells
-        .removeFirst()
-        .cellKey
-        ?.currentContext
+  bool defineCellSize() {
+    var renderBox = RequestsKeeper.requests.last.cellKey?.currentContext
         ?.findRenderObject() as RenderBox;
-    _markerPositionQueue.add(renderBox.localToGlobal(Offset.zero));
-    _cellSize = renderBox.size;
-    notifyListeners();
+    if (_cellSize != renderBox.size) {
+      _cellSize = renderBox.size;
+      return true;
+    }
+    return false;
   }
-}
 
-void notifySnakeIfReady() {
-  bool hasUnready = allTransfers
-      .any((element) => element.startPos == null && element.endPos == null);
-  if (!hasUnready) {
-    // for (var snake in allSnakes) {
-    //     var start = getPositionByKey(snake.startKey);
-    //     snake.startPos = start;
-    //     var end = getPositionByKey(snake.endCellKey);
-    //     snake.endPos = end;
+  void notifySnakeIfReady() {
+    // bool hasUnready = allTransfers
+    //     .any((element) => element.startPos == null && element.endPos == null);
+    // if (!hasUnready) {
+    notifyListeners();
     // }
-    notifyListeners();
   }
-}
-
-// void rereadSnakesCellPositions() {
-//   for (var transferData in allTransfers) {
-//     transferData.endPos = getPositionByKey(transferData.endCellKey);
-//     transferData.startPos = getPositionByKey(transferData.startCellKey);
-//   }
-//   notifySnakeIfReady();
-// }
 
   checkUnvisitedMarkerPositions() {
-    print('more marker position cheking');
+    print('marker position checking');
     if (_markerPositionQueue.isNotEmpty) {
       notifyListeners();
     }
@@ -215,37 +186,62 @@ void notifySnakeIfReady() {
 
     if (transfer != null) {
       transfer.isVisible = true;
-      print('Snake! New end position: ${transfer.endNum}');
+      print('${transfer.type}! New end position: ${transfer.endNum}');
       // _openedPosition = transfer.endNum;
       RequestData requestByNumber = getRequestByNumber(transfer.endNum);
       Offset? position = requestByNumber.position;
       if (position != null) {
         addMarkerPos(position);
-        _openedPosition = requestByNumber.num;
+        _currentNum = requestByNumber.num;
       }
       // notifyListeners();
     }
   }
 
-  Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? endCellKey) {
+  Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? cellKey) {
     RenderBox cellRenderBox =
-        endCellKey?.currentContext?.findRenderObject() as RenderBox;
+        cellKey?.currentContext?.findRenderObject() as RenderBox;
     return cellRenderBox.localToGlobal(Offset.zero);
   }
 
   void setTransfersPosition(Offset position, int num) {
-    var foundTransfer = allTransfers.firstWhereOrNull((transfer) => transfer.startNum == num);
-    if (foundTransfer!=null) {
+    var foundTransfer =
+        allTransfers.firstWhereOrNull((transfer) => transfer.startNum == num);
+    if (foundTransfer != null) {
       foundTransfer.startPos = position;
       return;
     }
-    foundTransfer = allTransfers.firstWhereOrNull((transfer) => transfer.endNum == num);
-    if (foundTransfer!=null) {
+    foundTransfer =
+        allTransfers.firstWhereOrNull((transfer) => transfer.endNum == num);
+    if (foundTransfer != null) {
       foundTransfer.endPos = position;
     }
   }
-// class Pair {
-//   Offset? startPos;
-//   Offset? endPos;
-// }
+
+  void defineMarkerPosition() {
+    var currentRequest = RequestsKeeper.requests
+        .firstWhereOrNull((element) => element.num == _currentNum);
+    if (currentRequest != null && currentRequest.position != null) {
+      addMarkerPos(currentRequest.position!);
+    }
+  }
+
+  void refreshCellPositions() {
+    for (var req in RequestsKeeper.requests) {
+      if (req.cellKey != null) {
+        var newPosition = getPositionByKey(req.cellKey);
+        req.position = newPosition;
+        setTransfersPosition(newPosition, req.num);
+      }
+    }
+  }
+
+  Offset getDefaultMarkerPosition() {
+    var startCell =
+        RequestsKeeper.requests.firstWhere((element) => element.num == 68);
+    if (startCell.cellKey?.currentContext == null) return Offset.zero;
+    var renderBox =
+        startCell.cellKey?.currentContext?.findRenderObject() as RenderBox;
+    return renderBox.localToGlobal(Offset.zero);
+  }
 }

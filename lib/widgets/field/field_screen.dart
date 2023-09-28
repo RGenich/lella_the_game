@@ -1,6 +1,9 @@
 import 'package:Leela/widgets/field/play_zone.dart';
 import 'package:Leela/widgets/field/interraction.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../leela_app.dart';
 
 class FieldWidget extends StatefulWidget {
   @override
@@ -12,7 +15,7 @@ class _FieldWidgetState extends State<FieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    context.widget.key;
+    // context.widget.key;
     return Scaffold(
       body: Container(
         child: Column(
@@ -31,5 +34,15 @@ class _FieldWidgetState extends State<FieldWidget> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      var state = Provider.of<LeelaAppState>(context, listen: false);
+      state.refreshCellPositions();
+      state.notify();
+    });
+    super.initState();
   }
 }

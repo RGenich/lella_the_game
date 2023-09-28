@@ -20,9 +20,19 @@ class RequestData {
   RequestData(this.header, this.assetName, this.description, this.num);
 }
 
-class RequestsLoader {
+class RequestsKeeper {
   static List<RequestData> requests = [
-    RequestData("Твой запрос говно", "newborning", "Ты лох", 0),
+
+    RequestData(
+        "Кидай по новой",
+        "god",
+        "Пока не выпадет 72",
+        -1),
+    RequestData(
+        "Твой запрос говно",
+        "newborning",
+        "Ты лох",
+        0),
     RequestData(
         "Рождение",
         "newborning",
@@ -385,24 +395,4 @@ class RequestsLoader {
         72),
   ];
 
-// static Future<List<RequestData>> getRequests() async {
-//   if (_requests.isEmpty) {
-//     try {
-//       String content = await rootBundle.loadString('assets/requests.json');
-//       final decoded = json.decode(content);
-//       for (final item in decoded) {
-//         _requests.add(RequestData(
-//           item['header'] as String,
-//           item['asset_name'] as String,
-//           item['description'] as String,
-//           item['num'] as int
-//           // item['destination_num'] as int,
-//         ));
-//       }
-//     } catch (e) {
-//       print('Проблема при десериализации запросов');
-//     }
-//   }
-//   return _requests;
-// }
 }

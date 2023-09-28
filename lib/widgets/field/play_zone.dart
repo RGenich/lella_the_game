@@ -1,6 +1,6 @@
 import 'package:Leela/widgets/field/marker.dart';
 import 'package:Leela/leela_app.dart';
-import 'package:Leela/service/request_loader.dart';
+import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'field_cell.dart';
@@ -18,20 +18,24 @@ class _PlayZoneState extends State<PlayZone> {
   _PlayZoneState();
 
   List<GameRow> buildRows() {
-    var startPos = 64;
-    var endPos = 73;
+    var startPos = 65;
+    var endPos = 74;
     List<GameRow> rows = [];
     for (var j = 1; j < 9; ++j) {
-      var requestsOfRow = RequestsLoader.requests.getRange(startPos, endPos).toList();
+      var requestsOfRow = RequestsKeeper.requests.getRange(startPos, endPos).toList();
       rows.add(GameRow(requestsOfRow, j % 2 == 0));
       startPos -= 9;
       endPos -= 9;
     }
+
     return rows;
   }
 
   @override
   Widget build(BuildContext context) {
+    // var state = context.read<LeelaAppState>();
+    // state.refreshCellPositions();
+
     //Игровое поле
     return Expanded(
       child: NotificationListener<SizeChangedLayoutNotification>(
@@ -57,9 +61,14 @@ class _PlayZoneState extends State<PlayZone> {
 
   bool rebuildPositions(notification) {
     print('size changed');
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var state = Provider.of<LeelaAppState>(context, listen: false);
-      state.markerNotification();
+      state.refreshCellPositions();
+      state.notify();
+      state.defineCellSize();
+      state.defineMarkerPosition();
+      state.notify();
       // state.rereadSnakesCellPositions();
     });
     return true;

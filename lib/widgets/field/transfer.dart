@@ -1,36 +1,21 @@
-
 import 'package:Leela/leela_app.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'evil_snake.dart';
 
-enum TransferType {
-  ARROW, SNAKE
-}
+enum TransferType { ARROW, SNAKE }
+
 class Transfer {
   int startNum;
-  Offset? startPos;
+  Offset startPos = Offset.zero;
   int endNum;
-  Offset? endPos;
-  GlobalKey? startCellKey;
-  GlobalKey? endCellKey;
+  Offset endPos = Offset.zero;
   TransferType type;
   bool isVisible = false;
 
-  Transfer(this.startNum, this.endNum, this.type, {Offset? startPos, Offset? endPos, bool? isVisible});
-
-  void addStartCellKeys(GlobalKey startCell) {
-    this.startCellKey = startCell;
-    var renderBox = this.startCellKey?.currentContext?.findRenderObject() as RenderBox;
-    this.startPos = renderBox.localToGlobal(Offset.zero);
-  }
-
-  void addEndCellKeyAfterBuild(GlobalKey endCellKey) {
-    this.endCellKey = endCellKey;
-    var renderBox = this.endCellKey?.currentContext?.findRenderObject() as RenderBox;
-    this.endPos = renderBox.localToGlobal(Offset.zero);
-    }
+  Transfer(this.startNum, this.endNum, this.type,
+      {Offset? startPos, Offset? endPos, bool? isVisible});
 }
 
 class Snakes extends StatefulWidget {
@@ -44,10 +29,17 @@ class _SnakesState extends State<Snakes> {
   @override
   Widget build(BuildContext context) {
     var allSnakes = context.watch<LeelaAppState>().allTransfers;
-    return Stack(children: [
-      for (var snake in allSnakes)
-        if (snake.startPos!=null && snake.endPos!=null && snake.isVisible)
-          TransferWidget(snake)
-    ]);
+    return Stack(
+      children: buildTransfers(allSnakes),
+    );
+  }
+
+  List<TransferWidget> buildTransfers(List<Transfer> transfersData) {
+    List<TransferWidget> transferWidgets = [];
+    for (Transfer transferData in transfersData) {
+      if (transferData.isVisible)
+        transferWidgets.add(new TransferWidget(key: UniqueKey(), transferData: transferData,));
+    }
+    return transferWidgets;
   }
 }

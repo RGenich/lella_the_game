@@ -1,5 +1,5 @@
 import 'package:Leela/leela_app.dart';
-import 'package:Leela/service/request_loader.dart';
+import 'package:Leela/service/request_keeper.dart';
 import 'package:Leela/widgets/field/transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -41,34 +41,12 @@ class _GameCellState extends State<GameCell> {
 
   @override
   Widget build(BuildContext context) {
-    cellColor = request.isOpen ? openedColor : closedColor;
-    var appState = context.read<LeelaAppState>();
-    var currentPosition = appState.currentOpenPosition;
-    var pathForMarker = appState.pathForMarker;
-    // List<int> unvisitedNums = selectAllUnvisited(pathForMarker);
-    // if (unvisitedNums.contains(request.num)) {
-    //   pathForMarker[request.num]=false;
-    //   request.cellKey
-    // }
-    // if (request.isOpen && currentPosition == request.num) {
-    //   pathForMarker.remove(request.num);
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     RenderBox cellRenderBox =
-    //         cellKey.currentContext?.findRenderObject() as RenderBox;
-    //     var position = cellRenderBox.localToGlobal(Offset.zero);
-    //     appState.addMarkerPos(position);
-    //   });
+    var appState = context.watch<LeelaAppState>();
 
-    // for (var transferData in appState.allTransfers) {
-    //   if (transferData.startNum == request.num) {
-    //     addStartPositionAfterBuild(transferData, appState);
-    //     break;
-    //   }
-    //   if (transferData.endNum == request.num) {
-    //     addEndCellfterBuild(transferData, appState);
-    //     break;
-    //   }
-    // }
+    cellColor = request.isOpen ? openedColor : closedColor;
+    // var currentCellSize = appState.currentCellSize;
+    // var pathForMarker = appState.pathForMarker;
+    // print(currentCellSize);
     return Flexible(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -78,11 +56,11 @@ class _GameCellState extends State<GameCell> {
                   border: Border.all(color: cellColor), color: cellColor),
               child: InkWell(
                   onTap: () {
-                    appState.makeRecords(request);
-                    setState(() {
-                      request.isOpen = true;
-                      cellColor = Color.fromRGBO(255, 255, 255, 0);
-                    });
+                    // appState.makeRecords(request);
+                    // setState(() {
+                    //   request.isOpen = true;
+                    //   cellColor = Color.fromRGBO(255, 255, 255, 0);
+                    // });
                     Navigator.of(context)
                         .pushNamed("/card", arguments: request);
                   },
@@ -96,25 +74,5 @@ class _GameCellState extends State<GameCell> {
         },
       ),
     );
-  }
-
-  void addStartPositionAfterBuild(Transfer snakeData, LeelaAppState appState) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      snakeData.addStartCellKeys(cellKey);
-      appState.notifySnakeIfReady();
-    });
-  }
-
-  void addEndCellfterBuild(Transfer snakeData, LeelaAppState appState) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      snakeData.addEndCellKeyAfterBuild(cellKey);
-      appState.notifySnakeIfReady();
-    });
-  }
-
-  List<int> selectAllUnvisited(Map<int, bool> pathForMarker) {
-    return List.of(pathForMarker.entries
-        .where((element) => element.value == false)
-        .map((e) => e.key));
   }
 }

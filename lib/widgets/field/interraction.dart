@@ -25,11 +25,12 @@ class PlayerInput extends StatelessWidget {
                   context: context,
                   builder: (context) {
                     return MiniCard(request);
-                    //todo: лучше, чтобы размер клетоко определялся после изменения размера окна и первой загрузке
-                  }).then((value)  {
-                    appState.defineCellSizeAndMarkerPosition();
-                    appState.checkUnvisitedMarkerPositions();
-                  });
+                  }).then((value) {
+                appState.defineCellSize();
+                appState.defineMarkerPosition();
+                appState.checkUnvisitedMarkerPositions();
+                appState.notifyListeners();
+              });
               // Navigator.of(context).pushNamed("/card", arguments: request);
             },
             label: Text('Go', style: textTheme.bodyLarge),
