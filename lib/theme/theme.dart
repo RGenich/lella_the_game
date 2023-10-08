@@ -4,12 +4,23 @@ final theme = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.dark(secondary: Colors.blue),
     textTheme: TextTheme(
-        bodyLarge: TextStyle(fontSize: 20, ),
-        bodyMedium: TextStyle(fontWeight: FontWeight.bold),
-        bodySmall: TextStyle(fontSize: 14),
-        headlineLarge: TextStyle(
-            letterSpacing: 4.0,
-            fontWeight: FontWeight.bold
-        ),
-    )
-);
+      bodyLarge: TextStyle(
+        fontFamily: 'OpenSans',
+        fontSize: 20,
+      ),
+      bodyMedium: TextStyle(
+              fontFamily: 'OpenSans',
+              fontWeight: FontWeight.bold
+          ),
+      bodySmall: TextStyle(
+          fontFamily: 'OpenSans',
+          fontSize: 14
+      ),
+      headlineLarge: TextStyle(
+          fontFamily: 'OpenSans',
+          fontSize: 18,
+          color: Colors.white,
+          letterSpacing: 2.0,
+          fontWeight: FontWeight.bold
+      ),
+    ));

@@ -1,7 +1,6 @@
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class MiniCard extends StatefulWidget {
@@ -15,18 +14,15 @@ class MiniCard extends StatefulWidget {
 
 class _MiniCardState extends State<MiniCard> {
   _MiniCardState(this.request);
+
   var appState;
   bool expanded = false;
-  double opacityLevel = 1.0;
-  double opacityHeaderLevel = 0.0;
   RequestData request;
 
   initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 2800)).then((value) => setState(() {
+    Future.delayed(Duration(milliseconds: 10)).then((value) => setState(() {
           expanded = !expanded;
-          opacityLevel = opacityLevel == 0 ? 1.0 : 0.0;
-          opacityHeaderLevel = opacityHeaderLevel == 0 ? 1.0 : 0.0;
         }));
   }
 
@@ -34,71 +30,84 @@ class _MiniCardState extends State<MiniCard> {
   Widget build(BuildContext context) {
     var txtTheme = Theme.of(context).textTheme;
     appState = context.watch<LeelaAppState>();
+    Size currentCellSize = appState?.currentCellSize;
+    Offset reqPosition = request.position ?? Offset.zero;
+
     return LayoutBuilder(builder: (context, constraints) {
-      var nonExpanded = constraints.maxHeight / 100 * 30;
-      var expandedHeight = constraints.maxHeight / 100 * 85;
-      return Center(
+      var expandedHeight = constraints.maxHeight / 100 * 95;
+      var expandedWidth = constraints.maxWidth / 100 * 70;
+      return Align(
+        alignment: Alignment.topLeft,
         child: AnimatedContainer(
+          curve: Curves.fastOutSlowIn,
           // height: expanded ? 700.0 : 400.0 ,
-          height: expanded ? expandedHeight : nonExpanded,
-          width: expanded ? constraints.maxWidth : nonExpanded,
-          duration: Duration(seconds: 3),
-          // onEnd: ()=>{appState.checkUnvisitedMarkerPositions()},
+          height: expanded ? expandedHeight : currentCellSize.height,
+          width: expanded ? expandedWidth : currentCellSize.width,
+          duration: Duration(seconds: 2),
+          transform: expanded
+              ? Matrix4.translationValues(
+                  constraints.maxWidth / 10, 10.0, 0.0)
+              : Matrix4.translationValues(reqPosition.dx, reqPosition.dy, 0.0),
           child: Card(
             borderOnForeground: true,
             shape: RoundedRectangleBorder(
                 side: BorderSide(color: Colors.yellow),
-                borderRadius: BorderRadius.circular(50.0)),
+                borderRadius: BorderRadius.circular(10.0)),
             shadowColor: Colors.orange,
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: SingleChildScrollView(
-                  child: Column(children: [
-                    Stack(
-                        alignment: AlignmentDirectional.bottomStart,
-                        children: [
-                          Image.asset(
-                            fit: BoxFit.fill,
-                            // opacity: const AlwaysStoppedAnimation(0.1),
-                            'assets/images/${request.assetName}.jpg',
-                            scale: 0.1,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text("${request.num}. ${request.header}",
-                                textAlign: TextAlign.justify,
-                                style: txtTheme.headlineLarge),
-                          ),
-                          AnimatedOpacity(
-                              opacity: opacityLevel,
-                              duration: Duration(milliseconds: 3000),
-                              child: Container(
-                                // color: Colors.black,
-                                width: double.infinity,
-                                height: nonExpanded,
-                                child: Lottie.asset('assets/lotties/dice.json',
-                                    repeat: false,
-                                    alignment: Alignment.topCenter),
+            child: SingleChildScrollView(
+              child: Column(children: [
+                Stack(alignment: AlignmentDirectional.topStart, children: [
+                  Container(
+                    child: Image.asset(
+                      fit: BoxFit.fill,
+                      'assets/images/${request.assetName}.jpg',
+                      scale: 0.1,
+                    ),
+                  ),
+                  Container(
+                    transform: Matrix4.translationValues(0.0, 215.0, 0),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 30.0, top: 10),
+                      child: Text("${request.num}. ${request.header}",
+                          textAlign: TextAlign.left,
+                          style: txtTheme.headlineLarge),
+                    ),
+                  ),
+                  Container(
+                    transform: Matrix4.translationValues(0.0, 260.0, 0),
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: [
+                          0,
+                          0.2
+                        ],
+                            colors: [
+                          Color.fromRGBO(0, 0, 0, 0.2),
+                          // Colors.red,
+                          Colors.black
+                        ])),
+                    // color: Color.fromRGBO(0, 0, 0, 0.5),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 35.0, right: 30.0, top: 10, bottom: 20),
+                      child: RichText(
+                          text: TextSpan(
+                              text: request.description,
+                              style: TextStyle(
+                                  fontSize: 16, fontFamily: 'OpenSans')
+                              // style: txtTheme.bodyLarge
+
                               )),
-                        ]),
-                    Column(children: [
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(request.description,
-                            textAlign: TextAlign.justify,
-                            style: txtTheme.bodyLarge),
-                      )
-                    ]),
-                  ]),
-                )),
+                    ),
+                  )
+                ]),
+              ]),
+            ),
           ),
         ),
       );
     });
-  }
-  @override
-  void dispose () {
-    print('dispose checking');
-    super.dispose();
   }
 }

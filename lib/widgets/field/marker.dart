@@ -13,43 +13,39 @@ class Marker extends StatefulWidget {
 }
 
 class _MarkerState extends State<Marker> {
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
     Offset currentMarkerPosition = Offset.zero;
     // appState.refreshCellPositions();
     var newMarkerPosition = appState.getNextMarkerPosition;
-
+    var request = appState.getRequestByNumber(appState.currentPosition);
     var cellSize = appState.currentCellSize;
-    if (newMarkerPosition != null)
-      currentMarkerPosition = newMarkerPosition;
-    return
-      currentMarkerPosition == Offset.zero
-          ? SizedBox.shrink()
-          : AnimatedPositioned(
-          width: cellSize.width,
-          height: cellSize.height,
-          left: currentMarkerPosition.dx,
-          top: currentMarkerPosition.dy,
-          duration: Duration(seconds: 5),
-          onEnd: () {
-            appState.checkUnvisitedMarkerPositions();
-            showDialog<void>(
+    if (newMarkerPosition != null) currentMarkerPosition = newMarkerPosition;
+    return currentMarkerPosition == Offset.zero
+        ? SizedBox.shrink()
+        : AnimatedPositioned(
+            width: cellSize.width,
+            height: cellSize.height,
+            left: currentMarkerPosition.dx,
+            top: currentMarkerPosition.dy,
+            duration: Duration(seconds: 3),
+            onEnd: () {
+              showDialog(
                 context: context,
                 builder: (context) {
                   return MiniCard(request);
-                })
-            );
-          },
-          child: IgnorePointer(
-            // behavior: HitTestBehavior.translucent,
-            child: Container(
-              child: Lottie.asset(
-                  'assets/lotties/point.json',
-                  fit: BoxFit.contain
+                },
+              ).then((value) {
+                appState.checkTransfer(request);
+                appState.checkUnvisitedMarkerPositions();
+              });
+            },
+            child: IgnorePointer(
+              child: Container(
+                child: Lottie.asset('assets/lotties/point.json',
+                    fit: BoxFit.contain),
               ),
-            ),
-          ));
+            ));
   }
 }

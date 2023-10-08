@@ -1,6 +1,5 @@
 import 'package:Leela/widgets/field/field_screen.dart';
 import 'package:Leela/widgets/request_list/view/requests_list_screen.dart';
-import 'package:Leela/game/leela.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,7 +9,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
-  var game = LeelaGame();
+  // var game = LeelaGame();
 
   @override
   Widget build(BuildContext context) {
@@ -32,20 +31,27 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            BottomNavigationBar(onTap: _onItemTapped, items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.format_list_numbered),
-                label: 'Requests',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.play_arrow_outlined),
-                label: 'Game',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.school),
-                label: 'School',
-              ),
-            ]),
+            // BottomNavigationBar(onTap: _onItemTapped, items: [
+            //   BottomNavigationBarItem(
+            //     icon: Icon(Icons.format_list_numbered),
+            //     label: 'Requests',
+            //   ),
+            //   BottomNavigationBarItem(
+            //     icon: Icon(Icons.play_arrow_outlined),
+            //     label: 'Game',
+            //   ),
+            //   BottomNavigationBarItem(
+            //     icon: Icon(Icons.school),
+            //     label: 'School',
+            //   ),
+            // ]),
+            ////////////////////////////////////////////////
+
+
+
+
+
+
             //////////
             // SafeArea(
             //   child: NavigationRail(
@@ -96,9 +102,9 @@ class _HomePageState extends State<HomePage> {
   Widget definePage() {
     switch (selectedIndex) {
       case 0:
-        return ListOfRequest();
-      case 1:
         return FieldWidget();
+      case 1:
+        return ListOfRequest();
       // case 1:
       //   return GameWidget(game: game, overlayBuilderMap: <String,
       //       Widget Function(BuildContext, LeelaGame game)>{

@@ -2,12 +2,12 @@ import 'package:Leela/widgets/field/marker.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'field_cell.dart';
 import 'transfer.dart';
 
 class PlayZone extends StatefulWidget {
-
   @override
   State<PlayZone> createState() => _PlayZoneState();
 }
@@ -22,7 +22,8 @@ class _PlayZoneState extends State<PlayZone> {
     var endPos = 74;
     List<GameRow> rows = [];
     for (var j = 1; j < 9; ++j) {
-      var requestsOfRow = RequestsKeeper.requests.getRange(startPos, endPos).toList();
+      var requestsOfRow =
+          RequestsKeeper.requests.getRange(startPos, endPos).toList();
       rows.add(GameRow(requestsOfRow, j % 2 == 0));
       startPos -= 9;
       endPos -= 9;
@@ -33,29 +34,41 @@ class _PlayZoneState extends State<PlayZone> {
 
   @override
   Widget build(BuildContext context) {
-    // var state = context.read<LeelaAppState>();
-    // state.refreshCellPositions();
-
     //Игровое поле
-    return Expanded(
-      child: NotificationListener<SizeChangedLayoutNotification>(
-        onNotification: rebuildPositions,
-        child: SizeChangedLayoutNotifier(
-          child: Stack(children: [
-            Snakes(),
-            Container(
-                key: zoneKey,
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.brown)),
-                child: Column(
-                  children: buildRows(),
-                )),
-            Marker(),
-          ]),
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      // child: Container(
+      child: Container(
+        child: NotificationListener<SizeChangedLayoutNotification>(
+          onNotification: rebuildPositions,
+          child: SizeChangedLayoutNotifier(
+            child: Stack(children: [
+              Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                image: AssetImage("assets/images/girl3.jpg"),
+                fit: BoxFit.fill,
+              ))),
+              SizedBox(
+                  width: 5000,
+                  height: 5000,
+                  child: SvgPicture.asset(
+                    "assets/images/transfer_background.svg",
+                    fit: BoxFit.fill,
+                  )),
+              // Snakes(),
+              Container(
+                  key: zoneKey,
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.brown)),
+                  child: Column(
+                    children: buildRows(),
+                  )),
+              Marker(),
+            ]),
+          ),
         ),
       ),
-      // Pointer(),
-      // ]
     );
   }
 

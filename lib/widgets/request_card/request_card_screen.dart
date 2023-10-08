@@ -58,10 +58,11 @@ class RequestCard extends StatelessWidget {
                     ])),
                 // color: Gradient.lerp(a, b, t),
                 child: SingleChildScrollView(
+                  padding: EdgeInsets.all(24.0),
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(24.0),
                     child: RichText(
-                      textAlign: TextAlign.justify,
+                      // textAlign: TextAlign.justify,
                       text: TextSpan(
                         style: theme.textTheme.bodyLarge,
                         text: _request.description,

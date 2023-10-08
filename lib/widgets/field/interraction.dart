@@ -1,8 +1,8 @@
+
 import 'package:Leela/leela_app.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-
-import '../request_card/mini_card.dart';
 
 class PlayerInput extends StatelessWidget {
   const PlayerInput({super.key});
@@ -11,6 +11,7 @@ class PlayerInput extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
     var textTheme = Theme.of(context).textTheme;
+
     return Container(
       child: Row(
         children: [
@@ -20,16 +21,24 @@ class PlayerInput extends StatelessWidget {
           )),
           ElevatedButton.icon(
             onPressed: () async {
-              var request = appState.throwDice();
-              showDialog(
+              appState.throwRandom();
+              appState.checkMovies();
+              showDialog<void>(
                   context: context,
-                  builder: (context) {
-                    return MiniCard(request);
+                  builder: (BuildContext context) {
+                    return IgnorePointer(
+                        child: Container(
+                      // color: Colors.black,
+                      width: double.infinity,
+                      // height: nonExpanded,
+                      child: Lottie.asset('assets/lotties/dice.json',
+                          repeat: false, alignment: Alignment.center),
+                    ));
                   }).then((value) {
                 appState.defineCellSize();
                 appState.defineMarkerPosition();
                 appState.checkUnvisitedMarkerPositions();
-                appState.notifyListeners();
+                // appState.notifyListeners();
               });
               // Navigator.of(context).pushNamed("/card", arguments: request);
             },

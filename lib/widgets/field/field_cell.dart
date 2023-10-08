@@ -41,7 +41,7 @@ class _GameCellState extends State<GameCell> {
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<LeelaAppState>();
+    context.watch<LeelaAppState>();
 
     cellColor = request.isOpen ? openedColor : closedColor;
     // var currentCellSize = appState.currentCellSize;
@@ -56,11 +56,6 @@ class _GameCellState extends State<GameCell> {
                   border: Border.all(color: cellColor), color: cellColor),
               child: InkWell(
                   onTap: () {
-                    // appState.makeRecords(request);
-                    // setState(() {
-                    //   request.isOpen = true;
-                    //   cellColor = Color.fromRGBO(255, 255, 255, 0);
-                    // });
                     Navigator.of(context)
                         .pushNamed("/card", arguments: request);
                   },
@@ -68,7 +63,7 @@ class _GameCellState extends State<GameCell> {
                       child: Text(
                     // isDestinationCell ? "СЮДА" : "НЕТ",
                     request.isOpen ? request.header : request.num.toString(),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                     style: TextStyle(fontSize: 10.0),
                   ))));
         },
