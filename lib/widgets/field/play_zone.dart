@@ -59,8 +59,7 @@ class _PlayZoneState extends State<PlayZone> {
               // Snakes(),
               Container(
                   key: zoneKey,
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.brown)),
+                  // decoration: BoxDecoration(border: Border.all(color: Colors.brown)),
                   child: Column(
                     children: buildRows(),
                   )),
@@ -78,7 +77,7 @@ class _PlayZoneState extends State<PlayZone> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var state = Provider.of<LeelaAppState>(context, listen: false);
       state.refreshCellPositions();
-      state.notify();
+      // state.notify();
       state.defineCellSize();
       state.defineMarkerPosition();
       state.notify();

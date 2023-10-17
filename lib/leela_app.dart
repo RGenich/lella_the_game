@@ -30,7 +30,8 @@ class _LeelaAppState extends State<LeelaApp> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);;
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    ;
     return ChangeNotifierProvider(
       create: (context) => LeelaAppState(),
       child: MaterialApp(
@@ -44,14 +45,14 @@ class _LeelaAppState extends State<LeelaApp> {
 
 class LeelaAppState extends ChangeNotifier {
   List<Transfer> allTransfers = [
-    Transfer(12, 8, TransferType.SNAKE),//1
-    Transfer(16, 4, TransferType.SNAKE),//2
-    Transfer(24, 7, TransferType.SNAKE),//3
-    Transfer(29, 6, TransferType.SNAKE),//5
-    Transfer(44, 9, TransferType.SNAKE),//6
-    Transfer(52, 35, TransferType.SNAKE),//8
-    Transfer(55, 3, TransferType.SNAKE),//7
-    Transfer(61, 13, TransferType.SNAKE),//9
+    Transfer(12, 8, TransferType.SNAKE), //1
+    Transfer(16, 4, TransferType.SNAKE), //2
+    Transfer(24, 7, TransferType.SNAKE), //3
+    Transfer(29, 6, TransferType.SNAKE), //5
+    Transfer(44, 9, TransferType.SNAKE), //6
+    Transfer(52, 35, TransferType.SNAKE), //8
+    Transfer(55, 3, TransferType.SNAKE), //7
+    Transfer(61, 13, TransferType.SNAKE), //9
     Transfer(63, 2, TransferType.SNAKE), //4
     Transfer(72, 51, TransferType.SNAKE), //10
 
@@ -66,12 +67,6 @@ class LeelaAppState extends ChangeNotifier {
     Transfer(46, 62, TransferType.ARROW), //9
     Transfer(54, 68, TransferType.ARROW),
 
-    ///////////////REAL
-
-    // Transfer(1, 64, TransferType.ARROW),
-    // Transfer(55, 61, TransferType.ARROW),
-    // Transfer(46, 3, TransferType.ARROW),
-    // Transfer(9, 4, TransferType.ARROW),
   ];
 
   bool _isAllowMove = false;
@@ -92,6 +87,7 @@ class LeelaAppState extends ChangeNotifier {
 
   var favArray = <WordPair>[];
   int _currentNum = 0;
+  int _previousNum = 0;
   Queue<int> pathForMarker = Queue();
 
   int get currentPosition => _currentNum;
@@ -119,35 +115,27 @@ class LeelaAppState extends ChangeNotifier {
 //функция хранит какие отстроены клетки и
 // возвращает какую надо построить следующей
 
-  void makeRecords(RequestData requestData) {
-    // openedCells.add(requestData.header);
-    _currentNum = requestData.num;
-    notifyListeners();
-  }
-
   RequestData checkMovies() {
     // random = Random().nextInt(6) + 1;
     //TODO: return only for six?
     if (!_isAllowMove && random == 6) {
-    _isAllowMove = true;
+      _isAllowMove = true;
     }
-    print('Была позиция $_currentNum, выпало $random');
 
-    if (!_isAllowMove) random = 0;
-    if (_currentNum + random <= 72) {
-      _currentNum += random;
-
-      var request = getRequestByNumber(_currentNum);
-      request.isOpen = true;
-      print('Открыта клетка № $_currentNum, ${request.header}');
-      Offset? position = request.position;
-      if (position != null) addMarkerPos(position);
-      // checkTransfer(request);
-      return request;
-    } else {
-      print('Нужно кидать пока не выпадет 72');
-      return getRequestByNumber(-1);
+    if (!_isAllowMove || _currentNum + random > 72) {
+      random = 0;
     }
+    _previousNum = _currentNum;
+    _currentNum += random;
+    print('Была позиция $_previousNum, выпало $random, стало $_currentNum');
+    var request = getRequestByNumber(_currentNum);
+    print('Открыта клетка № $_currentNum, ${request.header}');
+    return request;
+    // }
+    // else {
+    //   print('Нужно кидать пока не выпадет 72');
+    //   return getRequestByNumber(_currentNum);
+    // }
   }
 
   RequestData getRequestByNumber(int number) {
@@ -197,9 +185,10 @@ class LeelaAppState extends ChangeNotifier {
       RequestData requestByNumber = getRequestByNumber(transfer.endNum);
       Offset? position = requestByNumber.position;
       if (position != null) {
-        requestByNumber.isOpen = true;
+        // requestByNumber.isOpen = true;
         addMarkerPos(position);
         _currentNum = requestByNumber.num;
+        // openPosition();
       }
       // notifyListeners();
     }
@@ -226,10 +215,14 @@ class LeelaAppState extends ChangeNotifier {
   }
 
   void defineMarkerPosition() {
-    var currentRequest = RequestsKeeper.requests
-        .firstWhereOrNull((element) => element.num == _currentNum);
-    if (currentRequest != null && currentRequest.position != null) {
-      addMarkerPos(currentRequest.position!);
+    for (var toOpen = _previousNum + 1; toOpen <= _currentNum; toOpen++) {
+      var currentRequest = RequestsKeeper.requests
+          .firstWhereOrNull((element) => element.num == toOpen);
+      if (currentRequest != null &&
+          currentRequest.position != null &&
+          currentRequest.num != _previousNum) {
+        addMarkerPos(currentRequest.position!);
+      }
     }
   }
 
@@ -254,5 +247,14 @@ class LeelaAppState extends ChangeNotifier {
 
   int throwRandom() {
     return random = Random().nextInt(6) + 1;
+  }
+
+  bool isAllCellsVisited() {
+    return _markerPositionQueue.isEmpty;
+  }
+
+  void openPosition() {
+    getRequestByNumber(currentPosition).isOpen = true;
+    notifyListeners();
   }
 }

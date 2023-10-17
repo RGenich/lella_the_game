@@ -66,7 +66,7 @@ class _FieldWidgetState extends State<FieldWidget>  with TickerProviderStateMixi
                                     appState.checkMovies();
                                     appState.defineCellSize();
                                     appState.defineMarkerPosition();
-                                    appState.checkUnvisitedMarkerPositions();
+                                    // appState.checkUnvisitedMarkerPositions();
                                     pause();
                                   },
                                   // width: 100,
@@ -105,7 +105,7 @@ class _FieldWidgetState extends State<FieldWidget>  with TickerProviderStateMixi
 
 
   void pause() {
-    Future.delayed(Duration(seconds: 3)).then((value) => setState(() {
+    Future.delayed(Duration(milliseconds: 1700)).then((value) => setState(() {
           enabled = true;
         }));
   }

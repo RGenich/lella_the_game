@@ -34,19 +34,21 @@ class _MiniCardState extends State<MiniCard> {
     Offset reqPosition = request.position ?? Offset.zero;
 
     return LayoutBuilder(builder: (context, constraints) {
-      var expandedHeight = constraints.maxHeight / 100 * 95;
+      // var expandedHeight = constraints.maxHeight / 100 * 95;
+      var expandedHeight = constraints.maxHeight;
       var expandedWidth = constraints.maxWidth / 100 * 70;
+      var spaceByTop = expandedHeight  / 100 * 80;
       return Align(
         alignment: Alignment.topLeft,
         child: AnimatedContainer(
           curve: Curves.fastOutSlowIn,
           // height: expanded ? 700.0 : 400.0 ,
           height: expanded ? expandedHeight : currentCellSize.height,
-          width: expanded ? expandedWidth : currentCellSize.width,
+          // width: expanded ? expandedWidth : currentCellSize.width,
+          width: expanded ? expandedHeight * 1.5 : currentCellSize.width,
           duration: Duration(seconds: 2),
           transform: expanded
-              ? Matrix4.translationValues(
-                  constraints.maxWidth / 10, 10.0, 0.0)
+              ? Matrix4.translationValues(constraints.maxWidth / 10, 10.0, 0.0)
               : Matrix4.translationValues(reqPosition.dx, reqPosition.dy, 0.0),
           child: Card(
             borderOnForeground: true,
@@ -55,55 +57,52 @@ class _MiniCardState extends State<MiniCard> {
                 borderRadius: BorderRadius.circular(10.0)),
             shadowColor: Colors.orange,
             child: SingleChildScrollView(
-              child: Column(children: [
-                Stack(alignment: AlignmentDirectional.topStart, children: [
-                  Container(
-                    child: Image.asset(
-                      fit: BoxFit.fill,
-                      'assets/images/${request.assetName}.jpg',
-                      scale: 0.1,
+              child: Stack(
+                  // alignment: AlignmentDirectional.topCenter,
+                  children: [
+                    Container(
+                      // transform: Matrix4.translationValues(0.0, -200, 0),
+                      child: Image.asset(
+                        fit: BoxFit.fill,
+                        'assets/images/${request.assetName}.jpg',
+                        scale: 0.1,
+                      ),
                     ),
-                  ),
-                  Container(
-                    transform: Matrix4.translationValues(0.0, 215.0, 0),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 30.0, top: 10),
-                      child: Text("${request.num}. ${request.header}",
-                          textAlign: TextAlign.left,
-                          style: txtTheme.headlineLarge),
+                    Container(
+                      // transform: Matrix4.translationValues(0.0, 215.0, 0),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 30.0, top: 10),
+                        child: Text("${request.num}. ${request.header}",
+                            textAlign: TextAlign.left,
+                            style: txtTheme.headlineLarge),
+                      ),
                     ),
-                  ),
-                  Container(
-                    transform: Matrix4.translationValues(0.0, 260.0, 0),
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            stops: [
-                          0,
-                          0.2
-                        ],
-                            colors: [
-                          Color.fromRGBO(0, 0, 0, 0.2),
-                          // Colors.red,
-                          Colors.black
-                        ])),
-                    // color: Color.fromRGBO(0, 0, 0, 0.5),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 35.0, right: 30.0, top: 10, bottom: 20),
-                      child: RichText(
-                          text: TextSpan(
-                              text: request.description,
-                              style: TextStyle(
-                                  fontSize: 16, fontFamily: 'OpenSans')
-                              // style: txtTheme.bodyLarge
-
-                              )),
-                    ),
-                  )
-                ]),
-              ]),
+                    Container(
+                      // alignment: Alignment.bottomCenter,
+                      transform: Matrix4.translationValues(0.0, spaceByTop, 0),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              stops: [
+                            0,
+                            0.2
+                          ],
+                              colors: [
+                            Color.fromRGBO(0, 0, 0, 0.2),
+                            Colors.black
+                          ])),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 35.0, right: 30.0, top: 10, bottom: 20),
+                        child: RichText(
+                            text: TextSpan(
+                                text: request.description,
+                                style: TextStyle(
+                                    fontSize: 16, fontFamily: 'OpenSans'))),
+                      ),
+                    )
+                  ]),
             ),
           ),
         ),

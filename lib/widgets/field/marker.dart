@@ -19,6 +19,7 @@ class _MarkerState extends State<Marker> {
     Offset currentMarkerPosition = Offset.zero;
     // appState.refreshCellPositions();
     var newMarkerPosition = appState.getNextMarkerPosition;
+    bool isOpenCard = appState.isAllCellsVisited();
     var request = appState.getRequestByNumber(appState.currentPosition);
     var cellSize = appState.currentCellSize;
     if (newMarkerPosition != null) currentMarkerPosition = newMarkerPosition;
@@ -29,17 +30,21 @@ class _MarkerState extends State<Marker> {
             height: cellSize.height,
             left: currentMarkerPosition.dx,
             top: currentMarkerPosition.dy,
-            duration: Duration(seconds: 3),
+            duration: Duration(milliseconds: 1500),
+            curve: Curves.linearToEaseOut,
             onEnd: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return MiniCard(request);
-                },
-              ).then((value) {
-                appState.checkTransfer(request);
-                appState.checkUnvisitedMarkerPositions();
-              });
+              if (isOpenCard) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return  MiniCard(request);
+                  },
+                ).then((value) {
+                  appState.openPosition();
+                  appState.checkTransfer(request);
+                  appState.checkUnvisitedMarkerPositions();
+                });
+              } else appState.checkUnvisitedMarkerPositions();
             },
             child: IgnorePointer(
               child: Container(

@@ -15,11 +15,10 @@ class GameCell extends StatefulWidget {
 
 class _GameCellState extends State<GameCell> {
   final Color openedColor = Color.fromRGBO(255, 255, 255, 0);
-  final Color closedColor = Color.fromRGBO(0, 0, 0, 0.5);
+  final Color closedColor = Color.fromRGBO(0, 0, 0, 0.34);
   Color cellColor = Color.fromRGBO(255, 255, 255, 0);
   final RequestData request;
   var cellKey = GlobalKey();
-  TransferType? currentCellType;
 
   _GameCellState(RequestData this.request) {
     request.cellKey = this.cellKey;

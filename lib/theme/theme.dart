@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 final theme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.dark(secondary: Colors.blue),
+    colorScheme: ColorScheme.dark(background: Color.fromRGBO(1, 1, 6, 1),secondary: Colors.blue),
     textTheme: TextTheme(
       bodyLarge: TextStyle(
         fontFamily: 'OpenSans',
