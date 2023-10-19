@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:Leela/widgets/field/marker.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_keeper.dart';
@@ -79,7 +81,7 @@ class _PlayZoneState extends State<PlayZone> {
       state.refreshCellPositions();
       // state.notify();
       state.defineCellSize();
-      state.defineMarkerPosition();
+      state.addNewMarkerPosition();
       state.notify();
       // state.rereadSnakesCellPositions();
     });

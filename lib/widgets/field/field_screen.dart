@@ -10,7 +10,8 @@ class FieldWidget extends StatefulWidget {
   State<FieldWidget> createState() => _FieldWidgetState();
 }
 
-class _FieldWidgetState extends State<FieldWidget>  with TickerProviderStateMixin {
+class _FieldWidgetState extends State<FieldWidget>
+    with TickerProviderStateMixin {
   List<GameRow> rows = [];
   var number = 0;
   bool enabled = true;
@@ -18,13 +19,23 @@ class _FieldWidgetState extends State<FieldWidget>  with TickerProviderStateMixi
 
   @override
   void initState() {
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        
+      var state = Provider.of<LeelaAppState>(context, listen: false);
+        state.claculateMoves();
+        state.addNewMarkerPosition();
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var state = Provider.of<LeelaAppState>(context, listen: false);
       state.refreshCellPositions();
-      state.notify();
+      // state.notify();
     });
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
@@ -63,9 +74,7 @@ class _FieldWidgetState extends State<FieldWidget>  with TickerProviderStateMixi
                                     enabled = false;
                                     controller.forward();
                                     throwDice();
-                                    appState.checkMovies();
                                     appState.defineCellSize();
-                                    appState.defineMarkerPosition();
                                     // appState.checkUnvisitedMarkerPositions();
                                     pause();
                                   },
@@ -82,7 +91,7 @@ class _FieldWidgetState extends State<FieldWidget>  with TickerProviderStateMixi
                                         controller: controller,
                                         image: AssetImage(
                                             "assets/images/cube${number}.gif"),
-                                            // "assets/images/dice5.gif"),
+                                        // "assets/images/dice5.gif"),
                                       ),
                                     ),
                                   )),
@@ -102,7 +111,6 @@ class _FieldWidgetState extends State<FieldWidget>  with TickerProviderStateMixi
       // ),
     );
   }
-
 
   void pause() {
     Future.delayed(Duration(milliseconds: 1700)).then((value) => setState(() {

@@ -45,28 +45,27 @@ class _LeelaAppState extends State<LeelaApp> {
 
 class LeelaAppState extends ChangeNotifier {
   List<Transfer> allTransfers = [
-    Transfer(12, 8, TransferType.SNAKE), //1
-    Transfer(16, 4, TransferType.SNAKE), //2
-    Transfer(24, 7, TransferType.SNAKE), //3
-    Transfer(29, 6, TransferType.SNAKE), //5
-    Transfer(44, 9, TransferType.SNAKE), //6
-    Transfer(52, 35, TransferType.SNAKE), //8
-    Transfer(55, 3, TransferType.SNAKE), //7
-    Transfer(61, 13, TransferType.SNAKE), //9
-    Transfer(63, 2, TransferType.SNAKE), //4
-    Transfer(72, 51, TransferType.SNAKE), //10
+    Transfer(12, 8, TransferType.SNAKE), 
+    Transfer(16, 4, TransferType.SNAKE), 
+    Transfer(24, 7, TransferType.SNAKE), 
+    Transfer(29, 6, TransferType.SNAKE), 
+    Transfer(44, 9, TransferType.SNAKE), 
+    Transfer(52, 35, TransferType.SNAKE), 
+    Transfer(55, 3, TransferType.SNAKE), 
+    Transfer(61, 13, TransferType.SNAKE),
+    Transfer(63, 2, TransferType.SNAKE),
+    Transfer(72, 51, TransferType.SNAKE),
 
-    Transfer(10, 23, TransferType.ARROW), //1
-    Transfer(17, 69, TransferType.ARROW), //2
-    Transfer(20, 32, TransferType.ARROW), //3
-    Transfer(22, 60, TransferType.ARROW), //4
-    Transfer(27, 41, TransferType.ARROW), //5
-    Transfer(28, 50, TransferType.ARROW), //6
-    Transfer(37, 66, TransferType.ARROW), //7
-    Transfer(45, 67, TransferType.ARROW), //8
-    Transfer(46, 62, TransferType.ARROW), //9
+    Transfer(10, 23, TransferType.ARROW),
+    Transfer(17, 69, TransferType.ARROW),
+    Transfer(20, 32, TransferType.ARROW),
+    Transfer(22, 60, TransferType.ARROW),
+    Transfer(27, 41, TransferType.ARROW),
+    Transfer(28, 50, TransferType.ARROW),
+    Transfer(37, 66, TransferType.ARROW),
+    Transfer(45, 67, TransferType.ARROW),
+    Transfer(46, 62, TransferType.ARROW), 
     Transfer(54, 68, TransferType.ARROW),
-
   ];
 
   bool _isAllowMove = false;
@@ -112,12 +111,7 @@ class LeelaAppState extends ChangeNotifier {
 
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
 
-//функция хранит какие отстроены клетки и
-// возвращает какую надо построить следующей
-
-  RequestData checkMovies() {
-    // random = Random().nextInt(6) + 1;
-    //TODO: return only for six?
+  RequestData claculateMoves() {
     if (!_isAllowMove && random == 6) {
       _isAllowMove = true;
     }
@@ -131,11 +125,6 @@ class LeelaAppState extends ChangeNotifier {
     var request = getRequestByNumber(_currentNum);
     print('Открыта клетка № $_currentNum, ${request.header}');
     return request;
-    // }
-    // else {
-    //   print('Нужно кидать пока не выпадет 72');
-    //   return getRequestByNumber(_currentNum);
-    // }
   }
 
   RequestData getRequestByNumber(int number) {
@@ -214,7 +203,7 @@ class LeelaAppState extends ChangeNotifier {
     }
   }
 
-  void defineMarkerPosition() {
+  void addNewMarkerPosition() {
     for (var toOpen = _previousNum + 1; toOpen <= _currentNum; toOpen++) {
       var currentRequest = RequestsKeeper.requests
           .firstWhereOrNull((element) => element.num == toOpen);

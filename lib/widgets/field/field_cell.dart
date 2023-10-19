@@ -1,6 +1,5 @@
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_keeper.dart';
-import 'package:Leela/widgets/field/transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
