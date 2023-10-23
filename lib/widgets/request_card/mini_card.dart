@@ -60,23 +60,8 @@ class _MiniCardState extends State<MiniCard> {
               child: Stack(
                   // alignment: AlignmentDirectional.topCenter,
                   children: [
-                    Container(
-                      // transform: Matrix4.translationValues(0.0, -200, 0),
-                      child: Image.asset(
-                        fit: BoxFit.fill,
-                        'assets/images/${request.assetName}.jpg',
-                        scale: 0.1,
-                      ),
-                    ),
-                    Container(
-                      // transform: Matrix4.translationValues(0.0, 215.0, 0),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 30.0, top: 10),
-                        child: Text("${request.num}. ${request.header}",
-                            textAlign: TextAlign.left,
-                            style: txtTheme.headlineLarge),
-                      ),
-                    ),
+                    ImageWidget(request: request),
+                    HeaderWidget(request: request, txtTheme: txtTheme),
                     Container(
                       // alignment: Alignment.bottomCenter,
                       transform: Matrix4.translationValues(0.0, spaceByTop, 0),
@@ -108,5 +93,50 @@ class _MiniCardState extends State<MiniCard> {
         ),
       );
     });
+  }
+}
+
+class ImageWidget extends StatelessWidget {
+  const ImageWidget({
+    super.key,
+    required this.request,
+  });
+
+  final RequestData request;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // transform: Matrix4.translationValues(0.0, -200, 0),
+      child: Image.asset(
+        fit: BoxFit.fill,
+        'assets/images/${request.assetName}.jpg',
+        scale: 0.1,
+      ),
+    );
+  }
+}
+
+class HeaderWidget extends StatelessWidget {
+  const HeaderWidget({
+    super.key,
+    required this.request,
+    required this.txtTheme,
+  });
+
+  final RequestData request;
+  final TextTheme txtTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // transform: Matrix4.translationValues(0.0, 215.0, 0),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 30.0, top: 10),
+        child: Text("${request.num}. ${request.header}",
+            textAlign: TextAlign.left,
+            style: txtTheme.headlineLarge),
+      ),
+    );
   }
 }

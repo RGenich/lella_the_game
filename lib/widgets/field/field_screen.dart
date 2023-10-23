@@ -1,8 +1,7 @@
 import 'package:Leela/widgets/field/play_zone.dart';
 import 'package:flutter/material.dart';
-import 'package:gif/gif.dart';
 import 'package:provider/provider.dart';
-
+import 'package:gif/gif.dart';
 import '../../leela_app.dart';
 
 class FieldWidget extends StatefulWidget {
@@ -15,8 +14,9 @@ class _FieldWidgetState extends State<FieldWidget>
   List<GameRow> rows = [];
   var number = 0;
   bool enabled = true;
-  late GifController controller = GifController(vsync: this);
-
+  late var controller = GifController(vsync: this);
+  //
+  // late FlutterGifController controller= FlutterGifController(vsync: this);
   @override
   void initState() {
     controller.addStatusListener((status) {
@@ -71,6 +71,7 @@ class _FieldWidgetState extends State<FieldWidget>
                               child: InkWell(
                                   onTap: () {
                                     controller.reset();
+
                                     enabled = false;
                                     controller.forward();
                                     throwDice();
@@ -85,9 +86,9 @@ class _FieldWidgetState extends State<FieldWidget>
                                       width: 70,
                                       height: 70,
                                       child: Gif(
-                                        // autostart: Autostart.once,
-                                        // fps: 60,
-                                        duration: Duration(milliseconds: 1500),
+                                        autostart: Autostart.once,
+                                        fps: 24,
+                                        // duration: Duration(milliseconds: 1500),
                                         controller: controller,
                                         image: AssetImage(
                                             "assets/images/cube${number}.gif"),

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../../service/request_keeper.dart';
 
 class RequestCard extends StatelessWidget {
-  RequestData? requestData;
+  // RequestData? requestData;
 
-  RequestCard();
+  // RequestCard();
 
-  RequestCard.withRealRequest(RequestData this.requestData);
+  // RequestCard.withRealRequest(RequestData this.requestData);
 
   @override
   Widget build(BuildContext context) {
