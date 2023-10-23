@@ -31,7 +31,7 @@ class _MarkerState extends State<Marker> {
             left: currentMarkerPosition.dx,
             top: currentMarkerPosition.dy,
             duration: Duration(milliseconds: 1500),
-            curve: Curves.linear,
+            curve: Curves.decelerate,
             onEnd: () {
               if (isOpenCard) {
                 showDialog(

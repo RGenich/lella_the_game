@@ -21,8 +21,7 @@ class _FieldWidgetState extends State<FieldWidget>
   void initState() {
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        
-      var state = Provider.of<LeelaAppState>(context, listen: false);
+        var state = Provider.of<LeelaAppState>(context, listen: false);
         state.claculateMoves();
         state.addNewMarkerPosition();
       }
@@ -40,10 +39,11 @@ class _FieldWidgetState extends State<FieldWidget>
   Widget build(BuildContext context) {
     var appState = context.watch<LeelaAppState>();
 
-    void throwDice() {
+    int throwDice() {
       setState(() {
         number = appState.throwRandom();
       });
+      return number;
     }
 
     return Scaffold(
@@ -73,10 +73,10 @@ class _FieldWidgetState extends State<FieldWidget>
                                     controller.reset();
                                     enabled = false;
                                     controller.forward();
-                                    throwDice();
+                                    int moveCount = throwDice();
                                     appState.defineCellSize();
                                     // appState.checkUnvisitedMarkerPositions();
-                                    pause();
+                                    pause(moveCount);
                                   },
                                   // width: 100,
                                   child: ClipRRect(
@@ -112,7 +112,7 @@ class _FieldWidgetState extends State<FieldWidget>
     );
   }
 
-  void pause() {
+  void pause(int moveCount) {
     Future.delayed(Duration(milliseconds: 1700)).then((value) => setState(() {
           enabled = true;
         }));

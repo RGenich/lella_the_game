@@ -35,13 +35,13 @@ class _MiniCardState extends State<MiniCard> {
 
     return LayoutBuilder(builder: (context, constraints) {
       // var expandedHeight = constraints.maxHeight / 100 * 95;
-      var expandedHeight = constraints.maxHeight;
+      var expandedHeight = constraints.maxHeight / 100 * 99;
       var expandedWidth = constraints.maxWidth / 100 * 70;
       var spaceByTop = expandedHeight  / 100 * 80;
       return Align(
         alignment: Alignment.topLeft,
         child: AnimatedContainer(
-          curve: Curves.fastOutSlowIn,
+          curve: Curves.easeOutCubic,
           // height: expanded ? 700.0 : 400.0 ,
           height: expanded ? expandedHeight : currentCellSize.height,
           // width: expanded ? expandedWidth : currentCellSize.width,
@@ -58,7 +58,7 @@ class _MiniCardState extends State<MiniCard> {
             shadowColor: Colors.orange,
             child: SingleChildScrollView(
               child: Stack(
-                  // alignment: AlignmentDirectional.topCenter,
+                  // alignment: AlignmentDirectional.top,
                   children: [
                     Container(
                       // transform: Matrix4.translationValues(0.0, -200, 0),
@@ -68,39 +68,45 @@ class _MiniCardState extends State<MiniCard> {
                         scale: 0.1,
                       ),
                     ),
-                    Container(
-                      // transform: Matrix4.translationValues(0.0, 215.0, 0),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 30.0, top: 10),
-                        child: Text("${request.num}. ${request.header}",
-                            textAlign: TextAlign.left,
-                            style: txtTheme.headlineLarge),
-                      ),
-                    ),
-                    Container(
-                      // alignment: Alignment.bottomCenter,
-                      transform: Matrix4.translationValues(0.0, spaceByTop, 0),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              stops: [
-                            0,
-                            0.2
-                          ],
-                              colors: [
-                            Color.fromRGBO(0, 0, 0, 0.2),
-                            Colors.black
-                          ])),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 35.0, right: 30.0, top: 10, bottom: 20),
-                        child: RichText(
-                            text: TextSpan(
-                                text: request.description,
-                                style: TextStyle(
-                                    fontSize: 16, fontFamily: 'OpenSans'))),
-                      ),
+                    Column(
+
+                      children: [
+                        SizedBox(height: spaceByTop),
+                        Container(
+                          // transform: Matrix4.translationValues(0.0, 215.0, 0),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0, top: 10),
+                            child: Text("${request.num}. ${request.header}",
+                                textAlign: TextAlign.left,
+                                style: txtTheme.headlineLarge),
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.bottomCenter,
+                          // transform: Matrix4.translationValues(0.0, spaceByTop, 0),
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  stops: [
+                                0,
+                                0.2
+                              ],
+                                  colors: [
+                                Color.fromRGBO(0, 0, 0, 0.2),
+                                Colors.black
+                              ])),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 35.0, right: 30.0, top: 10, bottom: 20),
+                            child: RichText(
+                                text: TextSpan(
+                                    text: request.description,
+                                    style: TextStyle(
+                                        fontSize: 16, fontFamily: 'OpenSans'))),
+                          ),
+                        ),
+                      ],
                     )
                   ]),
             ),
