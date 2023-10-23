@@ -35,9 +35,9 @@ class _MiniCardState extends State<MiniCard> {
 
     return LayoutBuilder(builder: (context, constraints) {
       // var expandedHeight = constraints.maxHeight / 100 * 95;
-      var expandedHeight = constraints.maxHeight;
+      var expandedHeight = constraints.maxHeight / 100 * 99;
       var expandedWidth = constraints.maxWidth / 100 * 70;
-      var spaceByTop = expandedHeight  / 100 * 80;
+      var spaceByTop = expandedHeight / 100 * 80;
       return Align(
         alignment: Alignment.topLeft,
         child: AnimatedContainer(
@@ -62,6 +62,7 @@ class _MiniCardState extends State<MiniCard> {
                   children: [
                     ImageWidget(request: request),
                     HeaderWidget(request: request, txtTheme: txtTheme),
+                    SizedBox(height: spaceByTop),
                     Container(
                       // alignment: Alignment.bottomCenter,
                       transform: Matrix4.translationValues(0.0, spaceByTop, 0),
@@ -134,8 +135,7 @@ class HeaderWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(left: 30.0, top: 10),
         child: Text("${request.num}. ${request.header}",
-            textAlign: TextAlign.left,
-            style: txtTheme.headlineLarge),
+            textAlign: TextAlign.left, style: txtTheme.headlineLarge),
       ),
     );
   }
