@@ -34,9 +34,7 @@ class _MiniCardState extends State<MiniCard> {
     Offset reqPosition = request.position ?? Offset.zero;
 
     return LayoutBuilder(builder: (context, constraints) {
-      // var expandedHeight = constraints.maxHeight / 100 * 95;
       var expandedHeight = constraints.maxHeight / 100 * 99;
-      var expandedWidth = constraints.maxWidth / 100 * 70;
       var spaceByTop = expandedHeight / 100 * 80;
       return Align(
         alignment: Alignment.topLeft,
@@ -57,43 +55,51 @@ class _MiniCardState extends State<MiniCard> {
                 borderRadius: BorderRadius.circular(10.0)),
             shadowColor: Colors.orange,
             child: SingleChildScrollView(
-              child: Stack(
-                  // alignment: AlignmentDirectional.topCenter,
+              child: Stack(children: [
+                ImageWidget(request: request),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ImageWidget(request: request),
-                    HeaderWidget(request: request, txtTheme: txtTheme),
                     SizedBox(height: spaceByTop),
-                    Container(
-                      // alignment: Alignment.bottomCenter,
-                      transform: Matrix4.translationValues(0.0, spaceByTop, 0),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              stops: [
-                            0,
-                            0.2
-                          ],
-                              colors: [
-                            Color.fromRGBO(0, 0, 0, 0.2),
-                            Colors.black
-                          ])),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 35.0, right: 30.0, top: 10, bottom: 20),
-                        child: RichText(
-                            text: TextSpan(
-                                text: request.description,
-                                style: TextStyle(
-                                    fontSize: 16, fontFamily: 'OpenSans'))),
-                      ),
-                    )
-                  ]),
+                    HeaderWidget(request: request, txtTheme: txtTheme),
+                    BigText(request: request)
+                  ],
+                ),
+              ]),
             ),
           ),
         ),
       );
     });
+  }
+}
+
+class BigText extends StatelessWidget {
+  const BigText({
+    super.key,
+    required this.request,
+  });
+
+  final RequestData request;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0, 0.2],
+              colors: [Color.fromRGBO(0, 0, 0, 0.2), Colors.black])),
+      child: Padding(
+        padding:
+            const EdgeInsets.only(left: 35.0, right: 30.0, top: 10, bottom: 20),
+        child: RichText(
+            text: TextSpan(
+                text: request.description,
+                style: TextStyle(fontSize: 16, fontFamily: 'OpenSans'))),
+      ),
+    );
   }
 }
 

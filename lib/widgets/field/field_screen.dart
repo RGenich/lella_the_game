@@ -1,50 +1,45 @@
 import 'package:Leela/widgets/field/play_zone.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gif/gif.dart';
 import '../../leela_app.dart';
+import 'dice.dart';
 
 class FieldWidget extends StatefulWidget {
   @override
   State<FieldWidget> createState() => _FieldWidgetState();
 }
 
-class _FieldWidgetState extends State<FieldWidget>
-    with TickerProviderStateMixin {
+class _FieldWidgetState extends State<FieldWidget> with TickerProviderStateMixin {
   List<GameRow> rows = [];
-  var number = 0;
-  bool enabled = true;
-  late var controller = GifController(vsync: this);
-  //
-  // late FlutterGifController controller= FlutterGifController(vsync: this);
+
   @override
   void initState() {
-    controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        var state = Provider.of<LeelaAppState>(context, listen: false);
-        state.claculateMoves();
-        state.addNewMarkerPosition();
-      }
-    });
+    // controller.addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     var state = Provider.of<LeelaAppState>(context, listen: false);
+    //     state.claculateMoves();
+    //   }
+    // });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var state = Provider.of<LeelaAppState>(context, listen: false);
       state.refreshCellPositions();
-      // state.notify();
+      state.addNewMarkerPosition();
+      state.notify();
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<LeelaAppState>();
-
-    int throwDice() {
-      setState(() {
-        number = appState.throwRandom();
-      });
-      return number;
-    }
+    // var appState = context.watch<LeelaAppState>();
+    //
+    // int throwDice() {
+    //   setState(() {
+    //     number = appState.throwRandom();
+    //   });
+    //   return number;
+    // }
 
     return Scaffold(
       body: Container(
@@ -58,64 +53,16 @@ class _FieldWidgetState extends State<FieldWidget>
               // PlayerInput()
             ]),
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                    // flex: 1,
-                    child: Container(
-                        alignment: Alignment.topCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: AbsorbPointer(
-                              absorbing: !enabled,
-                              child: InkWell(
-                                  onTap: () {
-                                    controller.reset();
-
-                                    enabled = false;
-                                    controller.forward();
-                                    int moveCount = throwDice();
-                                    appState.defineCellSize();
-                                    // appState.checkUnvisitedMarkerPositions();
-                                    pause(moveCount);
-                                  },
-                                  // width: 100,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Ink(
-                                      width: 70,
-                                      height: 70,
-                                      child: Gif(
-                                        autostart: Autostart.once,
-                                        fps: 24,
-                                        // duration: Duration(milliseconds: 1500),
-                                        controller: controller,
-                                        image: AssetImage(
-                                            "assets/images/cube${number}.gif"),
-                                        // "assets/images/dice5.gif"),
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                          ),
-                        )))
+                Dice()
               ],
             )
           ],
-          // mainAxisAlignment: MainAxisAlignment.end,
         ),
-      ), // decoration: BoxDecoration(
-      //   image: DecorationImage(
-      //     image: AssetImage("assets/images/god.jpg"),
-      //     fit: BoxFit.cover,
-      //   ),
-      // ),
+      ),
     );
   }
 
-  void pause(int moveCount) {
-    Future.delayed(Duration(milliseconds: 1700)).then((value) => setState(() {
-          enabled = true;
-        }));
-  }
 }

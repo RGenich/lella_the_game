@@ -15,12 +15,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Widget page = definePage();
 
-    void _onItemTapped(int index) {
-      setState(() {
-        selectedIndex = index;
-      });
-    }
-
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
         body: Column(
@@ -30,74 +24,11 @@ class _HomePageState extends State<HomePage> {
                 child: page,
               ),
             ),
-
-            // BottomNavigationBar(onTap: _onItemTapped, items: [
-            //   BottomNavigationBarItem(
-            //     icon: Icon(Icons.format_list_numbered),
-            //     label: 'Requests',
-            //   ),
-            //   BottomNavigationBarItem(
-            //     icon: Icon(Icons.play_arrow_outlined),
-            //     label: 'Game',
-            //   ),
-            //   BottomNavigationBarItem(
-            //     icon: Icon(Icons.school),
-            //     label: 'School',
-            //   ),
-            // ]),
-            ////////////////////////////////////////////////
-
-
-
-
-
-
-            //////////
-            // SafeArea(
-            //   child: NavigationRail(
-            //     // extended: constraints.maxWidth > 600,
-            //     destinations: [
-            //       NavigationRailDestination(
-            //         icon: Icon(Icons.list),
-            //         label: Text('Requests'),
-            //       ),
-            //       NavigationRailDestination(
-            //         icon: Icon(Icons.play_arrow_outlined),
-            //         label: Text('Leela'),
-            //       ),
-            //       NavigationRailDestination(
-            //         icon: Icon(Icons.play_arrow_outlined),
-            //         label: Text('Field'),
-            //       ),
-            //     ],
-            //     selectedIndex: selectedIndex,
-            //     onDestinationSelected: (value) {
-            //       setState(() {
-            //         selectedIndex = value;
-            //       });
-            //     },
-            //   ),
-            // ),
           ],
         ),
       );
     });
   }
-
-  // BottomNavigationBar(onTap: _onItemTapped, items: [
-  //   BottomNavigationBarItem(
-  //     icon: Icon(Icons.accessibility_rounded),
-  //     label: 'Game',
-  //   ),
-  //   BottomNavigationBarItem(
-  //     icon: Icon(Icons.format_list_numbered),
-  //     label: 'Requests',
-  //   ),
-  //   BottomNavigationBarItem(
-  //     icon: Icon(Icons.school),
-  //     label: 'School',
-  //   ),
-  // ]),
 
   Widget definePage() {
     switch (selectedIndex) {

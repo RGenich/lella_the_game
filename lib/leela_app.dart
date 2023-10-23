@@ -229,8 +229,7 @@ class LeelaAppState extends ChangeNotifier {
     var startCell =
         RequestsKeeper.requests.firstWhere((element) => element.num == 68);
     if (startCell.cellKey?.currentContext == null) return Offset.zero;
-    var renderBox =
-        startCell.cellKey?.currentContext?.findRenderObject() as RenderBox;
+    var renderBox = startCell.cellKey?.currentContext?.findRenderObject() as RenderBox;
     return renderBox.localToGlobal(Offset.zero);
   }
 
