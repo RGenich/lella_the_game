@@ -1,6 +1,8 @@
+import 'package:Leela/bloc/request_bloc/request_bloc.dart';
 import 'package:Leela/widgets/field/field_screen.dart';
 import 'package:Leela/widgets/request_list/view/requests_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
+
   // var game = LeelaGame();
 
   @override
@@ -16,17 +19,7 @@ class _HomePageState extends State<HomePage> {
     Widget page = definePage();
 
     return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              child: Container(
-                child: page,
-              ),
-            ),
-          ],
-        ),
-      );
+      return Scaffold(body: Column(children: [Expanded(child: FieldWidget())]));
     });
   }
 

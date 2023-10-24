@@ -1,4 +1,6 @@
+import 'package:Leela/bloc/dice_bloc/dice_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gif/gif.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +11,7 @@ class Dice extends StatefulWidget {
   State<Dice> createState() => _DiceState();
 }
 
-class _DiceState extends State<Dice> with TickerProviderStateMixin{
+class _DiceState extends State<Dice> with TickerProviderStateMixin {
   int number = 0;
   bool enabled = true;
   late GifController controller = GifController(vsync: this);
@@ -44,32 +46,35 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin{
           }));
     }
 
-    return AbsorbPointer(
-      absorbing: !enabled,
-      child: InkWell(
-          onTap: () {
-            controller.reset();
-            enabled = false;
-            controller.forward();
-            throwDice();
-            appState.defineCellSize();
-            pause();
-          },
-          // width: 100,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Ink(
-              width: 70,
-              height: 70,
-              child: Gif(
-                // autostart: Autostart.once,
-                // fps: 60,
-                duration: Duration(milliseconds: 1500),
-                controller: controller,
-                image: AssetImage("assets/images/cube${number}.gif"),
-              ),
-            ),
-          )),
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => DiceBloc()..add(InitialDiceEvent()))
+        ],
+        child: AbsorbPointer(
+            absorbing: !enabled,
+            child: InkWell(
+                onTap: () {
+                  controller.reset();
+                  enabled = false;
+                  controller.forward();
+                  throwDice();
+                  appState.defineCellSize();
+                  pause();
+                },
+                // width: 100,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Ink(
+                    width: 70,
+                    height: 70,
+                    child: Gif(
+                      // autostart: Autostart.once,
+                      // fps: 60,
+                      duration: Duration(milliseconds: 1500),
+                      controller: controller,
+                      image: AssetImage("assets/images/cube${number}.gif"),
+                    ),
+                  ),
+                ))));
   }
 }

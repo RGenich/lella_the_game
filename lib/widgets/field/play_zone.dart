@@ -4,8 +4,10 @@ import 'package:Leela/widgets/field/marker.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import '../../bloc/request_bloc/request_bloc.dart';
 import 'field_cell.dart';
 import 'transfer.dart';
 
@@ -25,7 +27,7 @@ class _PlayZoneState extends State<PlayZone> {
     List<GameRow> rows = [];
     for (var j = 1; j < 9; ++j) {
       var requestsOfRow =
-          RequestsKeeper.requests.getRange(startPos, endPos).toList();
+      RequestsKeeper.requests.getRange(startPos, endPos).toList();
       rows.add(GameRow(requestsOfRow, j % 2 == 0));
       startPos -= 9;
       endPos -= 9;
@@ -37,56 +39,68 @@ class _PlayZoneState extends State<PlayZone> {
   @override
   Widget build(BuildContext context) {
     //Игровое поле
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      // child: Container(
-      child: Container(
-        child: NotificationListener<SizeChangedLayoutNotification>(
-          onNotification: rebuildPositions,
-          child: SizeChangedLayoutNotifier(
-            child: Stack(children: [
-              Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                image: AssetImage("assets/images/girl3.jpg"),
-                fit: BoxFit.fill,
-              ))),
-              SizedBox(
-                  width: 5000,
-                  height: 5000,
-                  child: SvgPicture.asset(
-                    "assets/images/transfer_background.svg",
-                    fit: BoxFit.fill,
-                  )),
-              // Snakes(),
-              Container(
-                  key: zoneKey,
-                  // decoration: BoxDecoration(border: Border.all(color: Colors.brown)),
-                  child: Column(
-                    children: buildRows(),
-                  )),
-              Marker(),
-            ]),
-          ),
-        ),
-      ),
-    );
-  }
 
-  bool rebuildPositions(notification) {
-    print('size changed');
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      var state = Provider.of<LeelaAppState>(context, listen: false);
-      state.refreshCellPositions();
-      // state.notify();
-      state.defineCellSize();
-      state.addNewMarkerPosition();
-      state.notify();
-      // state.rereadSnakesCellPositions();
-    });
-    return true;
+    return BlocBuilder<RequestBloc, RequestState>(
+        builder: (context, state) {
+          if (state is RequestInitialState) {
+            return CircularProgressIndicator(color: Colors.deepPurpleAccent);
+          }
+          if (state is RequestLoadedState) {
+            return AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Container(
+                child: NotificationListener<SizeChangedLayoutNotification>(
+                  onNotification: rebuildPositions,
+                  child: SizeChangedLayoutNotifier(
+                    child: Stack(children: [
+                      Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/girl3.jpg"),
+                                fit: BoxFit.fill,
+                              ))),
+                      SizedBox(
+                          width: 5000,
+                          height: 5000,
+                          child: SvgPicture.asset(
+                            "assets/images/transfer_background.svg",
+                            fit: BoxFit.fill,
+                          )),
+                      // Snakes(),
+                      Container(
+                          key: zoneKey,
+                          // decoration: BoxDecoration(border: Border.all(color: Colors.brown)),
+                          child: Column(
+                            children: buildRows(),
+                          )),
+                      Marker(),
+                    ]),
+                  ),
+                ),
+              ),
+            );
+          }
+          else {
+            return Text('a');
+          }
+        });
   }
+}
+
+bool rebuildPositions(notification) {
+  print('size changed');
+
+  //TODO: thats how sizes changed
+  // WidgetsBinding.instance.addPostFrameCallback((_) {
+  //   var state = Provider.of<LeelaAppState>(context, listen: false);
+  //   state.refreshCellPositions();
+  //   // state.notify();
+  //   state.defineCellSize();
+  //   state.addNewMarkerPosition();
+  //   state.notify();
+  //   // state.rereadSnakesCellPositions();
+  // });
+  return true;
 }
 
 class GameRow extends StatelessWidget {

@@ -1,3 +1,4 @@
+import 'package:Leela/service/request_keeper.dart';
 import 'package:Leela/widgets/field/play_zone.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,8 @@ class FieldWidget extends StatefulWidget {
   State<FieldWidget> createState() => _FieldWidgetState();
 }
 
-class _FieldWidgetState extends State<FieldWidget> with TickerProviderStateMixin {
+class _FieldWidgetState extends State<FieldWidget>
+    with TickerProviderStateMixin {
   List<GameRow> rows = [];
 
   @override
@@ -44,25 +46,20 @@ class _FieldWidgetState extends State<FieldWidget> with TickerProviderStateMixin
     return Scaffold(
       body: Container(
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(children: [
-              // OverlayInfo(),
-              Expanded(
-                  // flex: 5,
-                  child: PlayZone()),
-              // PlayerInput()
-            ]),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Dice()
-              ],
+            Expanded(flex: 9, child: PlayZone()),
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [Dice()],
+              ),
             )
           ],
         ),
       ),
     );
   }
-
 }

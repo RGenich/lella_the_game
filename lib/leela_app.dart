@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:Leela/bloc/request_bloc/request_bloc.dart';
 import 'package:Leela/router/routes.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:Leela/theme/theme.dart';
@@ -8,6 +9,7 @@ import 'package:Leela/widgets/field/transfer.dart';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 
@@ -31,13 +33,18 @@ class _LeelaAppState extends State<LeelaApp> {
       DeviceOrientation.landscapeRight,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    ;
-    return ChangeNotifierProvider(
-      create: (context) => LeelaAppState(),
-      child: MaterialApp(
-        title: 'Leela',
-        theme: theme,
-        routes: routes,
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => RequestBloc()..add(InitializingRequestsEvent()))
+      ],
+      child: ChangeNotifierProvider(
+        create: (context) => LeelaAppState(),
+        child: MaterialApp(
+          title: 'Leela',
+          theme: theme,
+          routes: routes,
+        ),
       ),
     );
   }
@@ -45,13 +52,13 @@ class _LeelaAppState extends State<LeelaApp> {
 
 class LeelaAppState extends ChangeNotifier {
   List<Transfer> allTransfers = [
-    Transfer(12, 8, TransferType.SNAKE), 
-    Transfer(16, 4, TransferType.SNAKE), 
-    Transfer(24, 7, TransferType.SNAKE), 
-    Transfer(29, 6, TransferType.SNAKE), 
-    Transfer(44, 9, TransferType.SNAKE), 
-    Transfer(52, 35, TransferType.SNAKE), 
-    Transfer(55, 3, TransferType.SNAKE), 
+    Transfer(12, 8, TransferType.SNAKE),
+    Transfer(16, 4, TransferType.SNAKE),
+    Transfer(24, 7, TransferType.SNAKE),
+    Transfer(29, 6, TransferType.SNAKE),
+    Transfer(44, 9, TransferType.SNAKE),
+    Transfer(52, 35, TransferType.SNAKE),
+    Transfer(55, 3, TransferType.SNAKE),
     Transfer(61, 13, TransferType.SNAKE),
     Transfer(63, 2, TransferType.SNAKE),
     Transfer(72, 51, TransferType.SNAKE),
@@ -64,7 +71,7 @@ class LeelaAppState extends ChangeNotifier {
     Transfer(28, 50, TransferType.ARROW),
     Transfer(37, 66, TransferType.ARROW),
     Transfer(45, 67, TransferType.ARROW),
-    Transfer(46, 62, TransferType.ARROW), 
+    Transfer(46, 62, TransferType.ARROW),
     Transfer(54, 68, TransferType.ARROW),
   ];
 
