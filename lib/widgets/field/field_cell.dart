@@ -1,3 +1,4 @@
+import 'package:Leela/bloc/request_bloc/request_bloc.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class GameCell extends StatefulWidget {
 }
 
 class _GameCellState extends State<GameCell> {
+
   final Color openedColor = Color.fromRGBO(255, 255, 255, 0);
   final Color closedColor = Color.fromRGBO(0, 0, 0, 0.34);
   Color cellColor = Color.fromRGBO(255, 255, 255, 0);
@@ -23,6 +25,7 @@ class _GameCellState extends State<GameCell> {
     request.cellKey = this.cellKey;
   }
 
+  RequestBloc requestBloc = RequestBloc();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -30,6 +33,7 @@ class _GameCellState extends State<GameCell> {
       Size size = cellBox.size;
       var position = cellBox.localToGlobal(Offset.zero);
       request.position = position;
+      requestBloc.add(RequestCellBuiltEvent(request: request, position: position));
       var appState = context.read<LeelaAppState>();
       appState.setCurrentCellSize(size);
       appState.setTransfersPosition(position, request.num);
@@ -69,3 +73,4 @@ class _GameCellState extends State<GameCell> {
     );
   }
 }
+

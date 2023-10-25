@@ -1,15 +1,16 @@
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+
+import '../../service/request_keeper.dart';
 
 part 'dice_event.dart';
 part 'dice_state.dart';
 
 class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
   int _lastRandom = 0;
-  int _currentCell = 0;
+  int _currentNumCell = 0;
 
   DiceBloc() : super(DiceUnthrowedState()) {
 
@@ -21,13 +22,13 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
       //тут можно ебануть эмит, который будет блокировать нажатие пока анимация не закончится
       event.blabla();
       throwDice();
-      emit(DiceThrowedState(_currentCell));
+      emit(DiceThrowedState(_currentNumCell, _lastRandom));
     });
   }
 
-
   throwDice() {
      _lastRandom = Random().nextInt(6) + 1;
-     _currentCell+=_lastRandom;
+     // _currentNumCell+=_lastRandom;
   }
+
 }

@@ -1,15 +1,19 @@
 part of 'dice_bloc.dart';
 
 @immutable
-abstract class DiceBlocState {}
+abstract class DiceBlocState {
+  int number = 0;
+}
 
 class DiceUnthrowedState extends DiceBlocState {
-  final int number = 0;
 
 }
 
 class DiceThrowedState extends DiceBlocState {
   final int currentCellNum;
 
-  DiceThrowedState(this.currentCellNum);
+  DiceThrowedState(this.currentCellNum, diceResult)
+  {
+    super.number = diceResult;
+  }
 }

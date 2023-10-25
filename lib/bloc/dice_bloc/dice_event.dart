@@ -1,11 +1,8 @@
 part of 'dice_bloc.dart';
 
 @immutable
-abstract class DiceEvent extends Equatable{
+abstract class DiceEvent {
 
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
 
 }
 
@@ -15,7 +12,9 @@ class InitialDiceEvent extends DiceEvent {
 }
 
 class ThrowDiceEvent extends DiceEvent {
-  void blabla() {print('a');}
+
+  void blabla() {print('throwed thrue bloc');}
+
   ThrowDiceEvent();
 }
 

@@ -1,14 +1,13 @@
-
+import 'package:Leela/bloc/request_bloc/request_bloc.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 import 'transfer_widget.dart';
 
+enum TransferType { ARROW, SNAKE }
 
-enum TransferType {
-  ARROW, SNAKE
-}
 class Transfer {
   int startNum;
   Offset startPos = Offset.zero;
@@ -19,8 +18,8 @@ class Transfer {
   TransferType type;
   bool isVisible = false;
 
-  Transfer(this.startNum, this.endNum, this.type, {Offset? startPos, Offset? endPos, bool? isVisible});
-
+  Transfer(this.startNum, this.endNum, this.type,
+      {Offset? startPos, Offset? endPos, bool? isVisible});
 }
 
 class Snakes extends StatefulWidget {
@@ -33,11 +32,24 @@ class Snakes extends StatefulWidget {
 class _SnakesState extends State<Snakes> {
   @override
   Widget build(BuildContext context) {
-    List<Transfer> allTransfers = context.watch<LeelaAppState>().allTransfers;
-    return Stack(children: [
-      for (Transfer transfer in allTransfers)
-        if (transfer.startPos != Offset.zero && transfer.isVisible)
-          TransferWidget(key: UniqueKey(), transferData: transfer)
-    ]);
+    // List<Transfer> allTransfers = context.watch<LeelaAppState>().allTransfers;
+    // List<Transfer> allTransfers = context
+    //     .watch<LeelaAppState>()
+    //     .allTransfers;
+    var reqbloc = RequestBloc();
+    return BlocProvider(
+      create: (context) => reqbloc,
+      child: BlocBuilder<RequestBloc, RequestState>(
+        builder: (context, state) {
+          if (state is AllTransferDefinedEvent) {
+            return Stack( children: [
+                for (Transfer transfer in state.allTransfers)
+                TransferWidget(key: UniqueKey(), transferData: transfer)
+                ]);
+          }
+          else return CircularProgressIndicator(color: Colors.deepOrange);
+        },
+      ),
+    );
   }
 }

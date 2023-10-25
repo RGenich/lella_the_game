@@ -51,7 +51,7 @@ class _LeelaAppState extends State<LeelaApp> {
 }
 
 class LeelaAppState extends ChangeNotifier {
-  List<Transfer> allTransfers = [
+  List<Transfer> toRemove = [
     Transfer(12, 8, TransferType.SNAKE),
     Transfer(16, 4, TransferType.SNAKE),
     Transfer(24, 7, TransferType.SNAKE),
@@ -172,7 +172,7 @@ class LeelaAppState extends ChangeNotifier {
 
   void checkTransfer(RequestData request) {
     Transfer? transfer =
-        allTransfers.firstWhereOrNull((trans) => trans.startNum == request.num);
+        toRemove.firstWhereOrNull((trans) => trans.startNum == request.num);
 
     if (transfer != null) {
       transfer.isVisible = true;
@@ -198,13 +198,13 @@ class LeelaAppState extends ChangeNotifier {
 
   void setTransfersPosition(Offset position, int num) {
     var foundTransfer =
-        allTransfers.firstWhereOrNull((transfer) => transfer.startNum == num);
+        toRemove.firstWhereOrNull((transfer) => transfer.startNum == num);
     if (foundTransfer != null) {
       foundTransfer.startPos = position;
       return;
     }
     foundTransfer =
-        allTransfers.firstWhereOrNull((transfer) => transfer.endNum == num);
+        toRemove.firstWhereOrNull((transfer) => transfer.endNum == num);
     if (foundTransfer != null) {
       foundTransfer.endPos = position;
     }
