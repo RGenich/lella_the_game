@@ -1,9 +1,8 @@
-import 'package:Leela/service/request_keeper.dart';
 import 'package:Leela/widgets/field/play_zone.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../leela_app.dart';
-import 'dice.dart';
+import 'dice_widget.dart';
 
 class FieldWidget extends StatefulWidget {
   @override
