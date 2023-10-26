@@ -79,10 +79,6 @@ class _PlayZoneState extends State<PlayZone> {
                 ),
               ),
             );
-          // }
-          // else {
-          //   return Text('a');
-          // }
         });
   }
 }
@@ -106,7 +102,7 @@ bool rebuildPositions(notification) {
 class GameRow extends StatelessWidget {
   final List<RequestData> requestsOfRow;
   final bool isDirectSequence;
-  List<Widget> cells = [];
+  late final List<Widget> cells;
 
   GameRow(List<RequestData> this.requestsOfRow, bool this.isDirectSequence,
       {Key? key})

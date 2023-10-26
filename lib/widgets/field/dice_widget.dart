@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gif/gif.dart';
-import 'package:provider/provider.dart';
 
 import '../../bloc/dice_bloc/dice_bloc.dart';
-import '../../leela_app.dart';
 
 class Dice extends StatefulWidget {
   @override
@@ -22,10 +20,6 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         diceBloc.add(ThrowDiceEndEvent());
-        // var state = Provider.of<LeelaAppState>(context, listen: false);
-        // state.claculateMoves();
-        // state.addNewMarkerPosition();
-        // state.notifyListeners();
       }
     });
     super.initState();
@@ -34,20 +28,19 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     void _makeDeal() {
-
+      diceBloc..add(ThrowDiceStartEvent());
       controller.reset();
       controller.forward();
       // controller.
-      diceBloc.add(ThrowDiceStartEvent());
     }
 
-    return Builder(
-      builder: (context) {
-        return Container(
-          child: BlocBuilder<DiceBloc, DiceBlocState>(
-            builder: (context, state) {
+    return Builder(builder: (context) {
+      return Container(
+        child: BlocBuilder<DiceBloc, DiceBlocState>(
+          builder: (context, state) {
+            // if (state is DiceThrowedState) {
               return AbsorbPointer(
-                  absorbing: state.diceStatus.isDiceBlocked,
+                  absorbing: state.isDiceBlocked,
                   child: InkWell(
                       onTap: _makeDeal,
                       child: ClipRRect(
@@ -59,14 +52,14 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
                             duration: Duration(milliseconds: 1500),
                             controller: controller,
                             image: AssetImage(
-                                "assets/images/cube${state.diceStatus.diceResult}.gif"),
+                                "assets/images/cube${state.diceResult}.gif"),
                           ),
                         ),
                       )));
-            },
-          ),
-        );
-      }
-    );
+            // } else return SizedBox();
+          },
+        ),
+      );
+    });
   }
 }

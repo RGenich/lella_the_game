@@ -1,30 +1,39 @@
 part of 'dice_bloc.dart';
 
-@immutable
-abstract class DiceBlocState {
-  DiceStatus diceStatus = DiceStatus();
-}
+class DiceBlocState {
 
-class DiceStatus {
-  int diceResult = 1;
-  bool isDiceBlocked = false;
-  int currentCellNum = 0;
-}
+  late int diceResult;
+  late bool isDiceBlocked;
+  late int currentCellNum;
+  late RequestData request;
 
-class DiceUnthrowedState extends DiceBlocState {
+  DiceBlocState({
+      this.diceResult = 1,
+      this.isDiceBlocked = false,
+      this.currentCellNum = 0,
+      required this.request
+  });
 
-}
-
-class DiceThrowedState extends DiceBlocState {
-
-  DiceThrowedState({int? currentCellNum, int? diceResult, bool isDiceBlocked = false})
-  {
-
-    if (diceResult != null) {
-      super.diceStatus.diceResult = diceResult;
-    }
-    super.diceStatus.currentCellNum = currentCellNum ?? 2;
-    // super.diceStatus.currentCellNum;
-    super.diceStatus.isDiceBlocked = isDiceBlocked;
+  DiceBlocState copyWith({
+    int? diceResult,
+    int? currentCellNum,
+    bool isDiceBlocked = false,
+    RequestData? request
+  }) {
+    return DiceBlocState(
+      diceResult: diceResult ?? this.diceResult,
+      currentCellNum: currentCellNum ?? this.currentCellNum,
+      isDiceBlocked: isDiceBlocked,
+      request: request ?? this.request
+    );
   }
 }
+//
+// class InitialDiceState extends DiceBlocState {
+//   InitialDiceState()
+//       : super(currentCellNum: 0, diceResult: 0, isDiceBlocked: false);
+// }
+//
+// class DiceThrowedState extends DiceBlocState {
+//
+// }

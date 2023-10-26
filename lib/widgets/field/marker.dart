@@ -15,7 +15,7 @@ class Marker extends StatefulWidget {
 class _MarkerState extends State<Marker> {
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<LeelaAppState>();
+    // var appState = context.watch<LeelaAppState>();
     Offset currentMarkerPosition = Offset.zero;
     // appState.refreshCellPositions();
     var newMarkerPosition = appState.getNextMarkerPosition;

@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:ui';
+
 import '../service/request_keeper.dart';
 import '../widgets/field/transfer.dart';
 
@@ -397,28 +400,35 @@ class Repository {
     Transfer(46, 62, TransferType.ARROW),
     Transfer(54, 68, TransferType.ARROW),
   ];
-  int _currentNumCell = 0;
-  int _lastRandumNum = 0;
+  final List<int> _numCelltoVisit = [0];
+  final Queue<Offset> _markerQueue = Queue();
+  int _lastRandomNum = 0;
   bool _isAllowMove = false;
 
   List<RequestData> get requests => _requests;
-
   bool get isAllowMove => _isAllowMove;
-
-  int get lastRandom => _lastRandumNum;
-
-  int get currentNumCell => _currentNumCell;
+  int get lastRandom => _lastRandomNum;
+  int get currentNumCell => _numCelltoVisit.last;
+  int get perviousNumCell => _numCelltoVisit.elementAt(_numCelltoVisit.length - 1);
 
   List<Transfer> get transfers => _allTransfers;
+
+  get markerQueue => markerQueue;
+
+  get defaultRequest => requests.first;
 
   void allowToMove() {
     _isAllowMove = true;
   }
 
-  set newValues (int i) {
-    _lastRandumNum = i;
-    // if (_isAllowMove)
-      _currentNumCell+=i;
+  set lastRandom (int i) {
+    _lastRandomNum = i;
+    addNewOpened();
   }
+
+  void addNewOpened() {
+    _numCelltoVisit.add(_numCelltoVisit.last + _lastRandomNum);
+  }
+
 
 }

@@ -16,17 +16,30 @@ import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 
 class LeelaApp extends StatefulWidget {
-  const LeelaApp({super.key});
+  late final Repository repository ;
+  late final RequestBloc requestBloc;
+  // = RequestBloc(repository);
+  late final DiceBloc diceBloc;
+
+  LeelaApp() {
+    repository = Repository();
+      requestBloc = RequestBloc(repository);
+      diceBloc = DiceBloc(repository);
+  } // = DiceBloc(repository);
+
+  // LeelaApp {
+  //   repository = Repository();
+  //   requestBloc = RequestBloc();
+  //   diceBloc = DiceBloc(r: repository);
+  // }
+
 
   @override
   State<LeelaApp> createState() => _LeelaAppState();
 }
 
 class _LeelaAppState extends State<LeelaApp> {
-  @override
-  void initState() {
-    super.initState();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +49,13 @@ class _LeelaAppState extends State<LeelaApp> {
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-    Repository repository = Repository();
-    RequestBloc requestBloc = RequestBloc(r: repository);
-    DiceBloc diceBloc = DiceBloc(r: repository);
 
     return RepositoryProvider(
-      create: (context) => repository,
+      create: (context) => widget.repository,
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => requestBloc..add(InitializingRequestsEvent())),
-          BlocProvider(create: (context) => diceBloc..add(InitialDiceEvent()))
+          BlocProvider(create: (context) => widget.requestBloc..add(InitializingRequestsEvent())),
+          BlocProvider(create: (context) => widget.diceBloc..add(InitialDiceEvent()))
         ],
         child: ChangeNotifierProvider(
           create: (context) => LeelaAppState(),

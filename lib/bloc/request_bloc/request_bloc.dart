@@ -15,7 +15,7 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
   final Repository r;
   List<RequestData> requests = [];
 
-  RequestBloc({required this.r}) : super(RequestInitialState()) {
+  RequestBloc(this.r) : super(RequestInitialState()) {
     on<InitializingRequestsEvent>(_loadRequests);
     on<RequestCellBuiltEvent>(_defineTransferPositions);
   }
