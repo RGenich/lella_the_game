@@ -8,13 +8,16 @@ abstract class DiceEvent {
 
 class InitialDiceEvent extends DiceEvent {
   InitialDiceEvent();
-
 }
 
-class ThrowDiceEvent extends DiceEvent {
+class ThrowDiceStartEvent extends DiceEvent {
 
-  void blabla() {print('throwed thrue bloc');}
+  ThrowDiceStartEvent();
+}
 
-  ThrowDiceEvent();
+
+class ThrowDiceEndEvent extends DiceEvent{
+
+  ThrowDiceEndEvent();
 }
 

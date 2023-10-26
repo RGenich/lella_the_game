@@ -45,7 +45,7 @@ class _PlayZoneState extends State<PlayZone> {
           if (state is RequestInitialState) {
             return CircularProgressIndicator(color: Colors.deepPurpleAccent);
           }
-          if (state is RequestLoadedState) {
+          // if (state is RequestLoadedState) {
             return AspectRatio(
               aspectRatio: 16 / 9,
               child: Container(
@@ -79,10 +79,10 @@ class _PlayZoneState extends State<PlayZone> {
                 ),
               ),
             );
-          }
-          else {
-            return Text('a');
-          }
+          // }
+          // else {
+          //   return Text('a');
+          // }
         });
   }
 }

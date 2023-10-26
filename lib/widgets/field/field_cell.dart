@@ -2,6 +2,7 @@ import 'package:Leela/bloc/request_bloc/request_bloc.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class GameCell extends StatefulWidget {
@@ -25,10 +26,10 @@ class _GameCellState extends State<GameCell> {
     request.cellKey = this.cellKey;
   }
 
-  RequestBloc requestBloc = RequestBloc();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      Bloc requestBloc = BlocProvider.of<RequestBloc>(context);
       RenderBox cellBox = cellKey.currentContext?.findRenderObject() as RenderBox;
       Size size = cellBox.size;
       var position = cellBox.localToGlobal(Offset.zero);

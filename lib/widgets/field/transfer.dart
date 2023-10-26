@@ -1,5 +1,6 @@
 import 'package:Leela/bloc/request_bloc/request_bloc.dart';
 import 'package:Leela/leela_app.dart';
+import 'package:Leela/repository/repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -32,24 +33,16 @@ class Snakes extends StatefulWidget {
 class _SnakesState extends State<Snakes> {
   @override
   Widget build(BuildContext context) {
-    // List<Transfer> allTransfers = context.watch<LeelaAppState>().allTransfers;
-    // List<Transfer> allTransfers = context
-    //     .watch<LeelaAppState>()
-    //     .allTransfers;
-    var reqbloc = RequestBloc();
-    return BlocProvider(
-      create: (context) => reqbloc,
-      child: BlocBuilder<RequestBloc, RequestState>(
-        builder: (context, state) {
-          if (state is AllTransferDefinedEvent) {
-            return Stack( children: [
-                for (Transfer transfer in state.allTransfers)
-                TransferWidget(key: UniqueKey(), transferData: transfer)
-                ]);
-          }
-          else return CircularProgressIndicator(color: Colors.deepOrange);
-        },
-      ),
+    return BlocBuilder<RequestBloc, RequestState>(
+      builder: (context, state) {
+        if (state is AllTransferDefinedEvent) {
+          return Stack( children: [
+              for (Transfer transfer in state.transfers)
+              TransferWidget(key: UniqueKey(), transferData: transfer)
+              ]);
+        }
+        else return CircularProgressIndicator(color: Colors.deepOrange);
+      },
     );
   }
 }

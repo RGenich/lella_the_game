@@ -1,7 +1,9 @@
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:Leela/bloc/dice_bloc/dice_bloc.dart';
 import 'package:Leela/bloc/request_bloc/request_bloc.dart';
+import 'package:Leela/repository/repository.dart';
 import 'package:Leela/router/routes.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:Leela/theme/theme.dart';
@@ -34,16 +36,24 @@ class _LeelaAppState extends State<LeelaApp> {
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => RequestBloc()..add(InitializingRequestsEvent()))
-      ],
-      child: ChangeNotifierProvider(
-        create: (context) => LeelaAppState(),
-        child: MaterialApp(
-          title: 'Leela',
-          theme: theme,
-          routes: routes,
+    Repository repository = Repository();
+    RequestBloc requestBloc = RequestBloc(r: repository);
+    DiceBloc diceBloc = DiceBloc(r: repository);
+
+    return RepositoryProvider(
+      create: (context) => repository,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => requestBloc..add(InitializingRequestsEvent())),
+          BlocProvider(create: (context) => diceBloc..add(InitialDiceEvent()))
+        ],
+        child: ChangeNotifierProvider(
+          create: (context) => LeelaAppState(),
+          child: MaterialApp(
+            title: 'Leela',
+            theme: theme,
+            routes: routes,
+          ),
         ),
       ),
     );
@@ -137,7 +147,7 @@ class LeelaAppState extends ChangeNotifier {
   RequestData getRequestByNumber(int number) {
     List<RequestData> requests = RequestsKeeper.requests;
     var requestByNumber =
-        requests.firstWhere((element) => element.num == number);
+    requests.firstWhere((element) => element.num == number);
     return requestByNumber;
   }
 
@@ -172,7 +182,7 @@ class LeelaAppState extends ChangeNotifier {
 
   void checkTransfer(RequestData request) {
     Transfer? transfer =
-        toRemove.firstWhereOrNull((trans) => trans.startNum == request.num);
+    toRemove.firstWhereOrNull((trans) => trans.startNum == request.num);
 
     if (transfer != null) {
       transfer.isVisible = true;
@@ -192,13 +202,13 @@ class LeelaAppState extends ChangeNotifier {
 
   Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? cellKey) {
     RenderBox cellRenderBox =
-        cellKey?.currentContext?.findRenderObject() as RenderBox;
+    cellKey?.currentContext?.findRenderObject() as RenderBox;
     return cellRenderBox.localToGlobal(Offset.zero);
   }
 
   void setTransfersPosition(Offset position, int num) {
     var foundTransfer =
-        toRemove.firstWhereOrNull((transfer) => transfer.startNum == num);
+    toRemove.firstWhereOrNull((transfer) => transfer.startNum == num);
     if (foundTransfer != null) {
       foundTransfer.startPos = position;
       return;
@@ -234,9 +244,10 @@ class LeelaAppState extends ChangeNotifier {
 
   Offset getDefaultMarkerPosition() {
     var startCell =
-        RequestsKeeper.requests.firstWhere((element) => element.num == 68);
+    RequestsKeeper.requests.firstWhere((element) => element.num == 68);
     if (startCell.cellKey?.currentContext == null) return Offset.zero;
-    var renderBox = startCell.cellKey?.currentContext?.findRenderObject() as RenderBox;
+    var renderBox = startCell.cellKey?.currentContext
+        ?.findRenderObject() as RenderBox;
     return renderBox.localToGlobal(Offset.zero);
   }
 

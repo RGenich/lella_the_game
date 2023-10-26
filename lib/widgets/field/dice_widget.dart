@@ -12,16 +12,16 @@ class Dice extends StatefulWidget {
 }
 
 class _DiceState extends State<Dice> with TickerProviderStateMixin {
-
   bool enabled = true;
   late GifController controller = GifController(vsync: this);
   late DiceBloc diceBloc;
+
   @override
   void initState() {
-    diceBloc = DiceBloc();
+    diceBloc = BlocProvider.of<DiceBloc>(context);
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        diceBloc.add(DiceAnimationCompleteEvent());
+        diceBloc.add(ThrowDiceEndEvent());
         // var state = Provider.of<LeelaAppState>(context, listen: false);
         // state.claculateMoves();
         // state.addNewMarkerPosition();
@@ -33,22 +33,21 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     void _makeDeal() {
-      diceBloc.add(ThrowDiceEvent());
+
       controller.reset();
       controller.forward();
+      // controller.
+      diceBloc.add(ThrowDiceStartEvent());
     }
 
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => diceBloc..add(InitialDiceEvent()))
-        ],
-        child: Container(
+    return Builder(
+      builder: (context) {
+        return Container(
           child: BlocBuilder<DiceBloc, DiceBlocState>(
             builder: (context, state) {
               return AbsorbPointer(
-                  absorbing: !enabled,
+                  absorbing: state.diceStatus.isDiceBlocked,
                   child: InkWell(
                       onTap: _makeDeal,
                       child: ClipRRect(
@@ -60,12 +59,14 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
                             duration: Duration(milliseconds: 1500),
                             controller: controller,
                             image: AssetImage(
-                                "assets/images/cube${state.number}.gif"),
+                                "assets/images/cube${state.diceStatus.diceResult}.gif"),
                           ),
                         ),
                       )));
             },
           ),
-        ));
+        );
+      }
+    );
   }
 }
