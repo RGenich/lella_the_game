@@ -2,44 +2,34 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:Leela/bloc/dice_bloc/dice_bloc.dart';
+import 'package:Leela/bloc/marker_bloc/marker_bloc.dart';
 import 'package:Leela/bloc/request_bloc/request_bloc.dart';
 import 'package:Leela/repository/repository.dart';
 import 'package:Leela/router/routes.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:Leela/theme/theme.dart';
 import 'package:Leela/widgets/field/transfer.dart';
+import 'package:collection/collection.dart';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart';
+
+import 'model/request_data.dart';
 
 class LeelaApp extends StatefulWidget {
-  late final Repository repository ;
-  late final RequestBloc requestBloc;
-  // = RequestBloc(repository);
-  late final DiceBloc diceBloc;
-
-  LeelaApp() {
-    repository = Repository();
-      requestBloc = RequestBloc(repository);
-      diceBloc = DiceBloc(repository);
-  } // = DiceBloc(repository);
-
-  // LeelaApp {
-  //   repository = Repository();
-  //   requestBloc = RequestBloc();
-  //   diceBloc = DiceBloc(r: repository);
-  // }
-
+  LeelaApp() {}
 
   @override
   State<LeelaApp> createState() => _LeelaAppState();
 }
 
 class _LeelaAppState extends State<LeelaApp> {
-
+  final Repository repository = Repository();
+  late final MarkerBloc markerBloc = MarkerBloc(repository: repository);
+  late final RequestBloc requestBloc = RequestBloc(repository);
+  late final DiceBloc diceBloc = DiceBloc(repository);
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +39,14 @@ class _LeelaAppState extends State<LeelaApp> {
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-
     return RepositoryProvider(
-      create: (context) => widget.repository,
+      create: (context) => repository,
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => widget.requestBloc..add(InitializingRequestsEvent())),
-          BlocProvider(create: (context) => widget.diceBloc..add(InitialDiceEvent()))
+          BlocProvider(
+              create: (context) => requestBloc..add(InitializingRequestsEvent())),
+          BlocProvider(create: (context) => diceBloc..add(InitialDiceEvent())),
+          BlocProvider(create: (context) => markerBloc..add(MarkerInitialEvent()))
         ],
         child: ChangeNotifierProvider(
           create: (context) => LeelaAppState(),
@@ -82,7 +73,6 @@ class LeelaAppState extends ChangeNotifier {
     Transfer(61, 13, TransferType.SNAKE),
     Transfer(63, 2, TransferType.SNAKE),
     Transfer(72, 51, TransferType.SNAKE),
-
     Transfer(10, 23, TransferType.ARROW),
     Transfer(17, 69, TransferType.ARROW),
     Transfer(20, 32, TransferType.ARROW),
@@ -122,13 +112,13 @@ class LeelaAppState extends ChangeNotifier {
 
   Offset? lastMarkerPos = null;
 
-  Offset? get getNextMarkerPosition {
-    if (!_isAllowMove) return getDefaultMarkerPosition();
-    if (_markerPositionQueue.isNotEmpty)
-      return _markerPositionQueue.removeFirst();
-    else
-      return lastMarkerPos;
-  }
+  // Offset? get getNextMarkerPosition {
+  //   if (!_isAllowMove) return getDefaultMarkerPosition();
+  //   if (_markerPositionQueue.isNotEmpty)
+  //     return _markerPositionQueue.removeFirst();
+  //   else
+  //     return lastMarkerPos;
+  // }
 
   void addMarkerPos(Offset position) {
     if (_markerPositionQueue.isEmpty || _markerPositionQueue.last != position)
@@ -138,42 +128,27 @@ class LeelaAppState extends ChangeNotifier {
 
   get getLastDiceScore => _diceScores.isNotEmpty ? _diceScores.last : 0;
 
-  RequestData claculateMoves() {
-    if (!_isAllowMove && random == 6) {
-      _isAllowMove = true;
-    }
 
-    if (!_isAllowMove || _currentNum + random > 72) {
-      random = 0;
-    }
-    _previousNum = _currentNum;
-    _currentNum += random;
-    print('Была позиция $_previousNum, выпало $random, стало $_currentNum');
-    var request = getRequestByNumber(_currentNum);
-    print('Открыта клетка № $_currentNum, ${request.header}');
-    return request;
-  }
-
-  RequestData getRequestByNumber(int number) {
-    List<RequestData> requests = RequestsKeeper.requests;
-    var requestByNumber =
-    requests.firstWhere((element) => element.num == number);
-    return requestByNumber;
-  }
+  // RequestData getRequestByNumber(int number) {
+  //   List<RequestData> requests = RequestsKeeper.requests;
+  //   var requestByNumber =
+  //       requests.firstWhere((element) => element.num == number);
+  //   return requestByNumber;
+  // }
 
   void notify() {
     notifyListeners();
   }
 
-  bool defineCellSize() {
-    var renderBox = RequestsKeeper.requests.last.cellKey?.currentContext
-        ?.findRenderObject() as RenderBox;
-    if (_cellSize != renderBox.size) {
-      _cellSize = renderBox.size;
-      return true;
-    }
-    return false;
-  }
+  // bool defineCellSize() {
+  //   var renderBox = RequestsKeeper.requests.last.cellKey?.currentContext
+  //       ?.findRenderObject() as RenderBox;
+  //   if (_cellSize != renderBox.size) {
+  //     _cellSize = renderBox.size;
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   void notifySnakeIfReady() {
     // bool hasUnready = allTransfers
@@ -190,35 +165,35 @@ class LeelaAppState extends ChangeNotifier {
     }
   }
 
-  void checkTransfer(RequestData request) {
-    Transfer? transfer =
-    toRemove.firstWhereOrNull((trans) => trans.startNum == request.num);
-
-    if (transfer != null) {
-      transfer.isVisible = true;
-      print('${transfer.type}! New end position: ${transfer.endNum}');
-      // _openedPosition = transfer.endNum;
-      RequestData requestByNumber = getRequestByNumber(transfer.endNum);
-      Offset? position = requestByNumber.position;
-      if (position != null) {
-        // requestByNumber.isOpen = true;
-        addMarkerPos(position);
-        _currentNum = requestByNumber.num;
-        // openPosition();
-      }
-      // notifyListeners();
-    }
-  }
+  // void checkTransfer(RequestData request) {
+  //   Transfer? transfer =
+  //       toRemove.firstWhereOrNull((trans) => trans.startNum == request.num);
+  //
+  //   if (transfer != null) {
+  //     transfer.isVisible = true;
+  //     print('${transfer.type}! New end position: ${transfer.endNum}');
+  //     // _openedPosition = transfer.endNum;
+  //     RequestData requestByNumber = getRequestByNumber(transfer.endNum);
+  //     Offset? position = requestByNumber.position;
+  //     if (position != null) {
+  //       // requestByNumber.isOpen = true;
+  //       addMarkerPos(position);
+  //       _currentNum = requestByNumber.num;
+  //       // openPosition();
+  //     }
+  //     // notifyListeners();
+  //   }
+  // }
 
   Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? cellKey) {
     RenderBox cellRenderBox =
-    cellKey?.currentContext?.findRenderObject() as RenderBox;
+        cellKey?.currentContext?.findRenderObject() as RenderBox;
     return cellRenderBox.localToGlobal(Offset.zero);
   }
 
   void setTransfersPosition(Offset position, int num) {
     var foundTransfer =
-    toRemove.firstWhereOrNull((transfer) => transfer.startNum == num);
+        toRemove.firstWhereOrNull((transfer) => transfer.startNum == num);
     if (foundTransfer != null) {
       foundTransfer.startPos = position;
       return;
@@ -230,36 +205,36 @@ class LeelaAppState extends ChangeNotifier {
     }
   }
 
-  void addNewMarkerPosition() {
-    for (var toOpen = _previousNum + 1; toOpen <= _currentNum; toOpen++) {
-      var currentRequest = RequestsKeeper.requests
-          .firstWhereOrNull((element) => element.num == toOpen);
-      if (currentRequest != null &&
-          currentRequest.position != null &&
-          currentRequest.num != _previousNum) {
-        addMarkerPos(currentRequest.position!);
-      }
-    }
-  }
+  // void addNewMarkerPosition() {
+  //   for (var toOpen = _previousNum + 1; toOpen <= _currentNum; toOpen++) {
+  //     var currentRequest = RequestsKeeper.requests
+  //         .firstWhereOrNull((element) => element.num == toOpen);
+  //     if (currentRequest != null &&
+  //         currentRequest.position != null &&
+  //         currentRequest.num != _previousNum) {
+  //       addMarkerPos(currentRequest.position!);
+  //     }
+  //   }
+  // }
 
-  void refreshCellPositions() {
-    for (var req in RequestsKeeper.requests) {
-      if (req.cellKey != null) {
-        var newPosition = getPositionByKey(req.cellKey);
-        req.position = newPosition;
-        setTransfersPosition(newPosition, req.num);
-      }
-    }
-  }
+  // void refreshCellPositions() {
+  //   for (var req in RequestsKeeper.requests) {
+  //     if (req.cellKey != null) {
+  //       var newPosition = getPositionByKey(req.cellKey);
+  //       req.position = newPosition;
+  //       setTransfersPosition(newPosition, req.num);
+  //     }
+  //   }
+  // }
 
-  Offset getDefaultMarkerPosition() {
-    var startCell =
-    RequestsKeeper.requests.firstWhere((element) => element.num == 68);
-    if (startCell.cellKey?.currentContext == null) return Offset.zero;
-    var renderBox = startCell.cellKey?.currentContext
-        ?.findRenderObject() as RenderBox;
-    return renderBox.localToGlobal(Offset.zero);
-  }
+  // Offset getDefaultMarkerPosition() {
+  //   var startCell =
+  //       RequestsKeeper.requests.firstWhere((element) => element.num == 68);
+  //   if (startCell.cellKey?.currentContext == null) return Offset.zero;
+  //   var renderBox =
+  //       startCell.cellKey?.currentContext?.findRenderObject() as RenderBox;
+  //   return renderBox.localToGlobal(Offset.zero);
+  // }
 
   int throwRandom() {
     return random = Random().nextInt(6) + 1;
@@ -269,8 +244,8 @@ class LeelaAppState extends ChangeNotifier {
     return _markerPositionQueue.isEmpty;
   }
 
-  void openPosition() {
-    getRequestByNumber(currentPosition).isOpen = true;
-    notifyListeners();
-  }
+  // void openPosition() {
+  //   getRequestByNumber(currentPosition).isOpen = true;
+  //   notifyListeners();
+  // }
 }

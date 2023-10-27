@@ -1,6 +1,6 @@
 part of 'dice_bloc.dart';
 
-class DiceBlocState {
+class DiceBlocState{
 
   late int diceResult;
   late bool isDiceBlocked;
@@ -28,12 +28,3 @@ class DiceBlocState {
     );
   }
 }
-//
-// class InitialDiceState extends DiceBlocState {
-//   InitialDiceState()
-//       : super(currentCellNum: 0, diceResult: 0, isDiceBlocked: false);
-// }
-//
-// class DiceThrowedState extends DiceBlocState {
-//
-// }

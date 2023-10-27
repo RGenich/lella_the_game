@@ -2,8 +2,6 @@ part of 'dice_bloc.dart';
 
 @immutable
 abstract class DiceEvent {
-
-
 }
 
 class InitialDiceEvent extends DiceEvent {
@@ -17,7 +15,5 @@ class ThrowDiceStartEvent extends DiceEvent {
 
 
 class ThrowDiceEndEvent extends DiceEvent{
-
   ThrowDiceEndEvent();
 }
-

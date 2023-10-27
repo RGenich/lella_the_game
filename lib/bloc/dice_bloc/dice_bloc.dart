@@ -3,10 +3,9 @@ import 'dart:ui';
 
 import 'package:Leela/repository/repository.dart';
 import 'package:bloc/bloc.dart';
-import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
-import '../../service/request_keeper.dart';
+import '../../model/request_data.dart';
 
 part 'dice_event.dart';
 
@@ -17,8 +16,7 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
   static const int AFTER68 = 68;
 
   DiceBloc(this.r)
-      : super(DiceBlocState(
-            diceResult: r.lastRandom, currentCellNum: r.currentNumCell, request: r.defaultRequest)) {
+      : super(DiceBlocState(diceResult: r.lastRandom, request: r.defaultRequest)) {
     on<InitialDiceEvent>((event, emit) {
       print('initial');
       emit(state.copyWith());
@@ -27,18 +25,20 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
     on<ThrowDiceStartEvent>((event, emit) {
       // emit(state.copyWith(isDiceBlocked: true));
       print('dice blocked');
-      //тут можно ебануть эмит, который будет блокировать нажатие пока анимация не закончится
-      r.lastRandom = Random().nextInt(6) + 1;
+      // r.lastRandom = Random().nextInt(6) + 1;
+      r.lastRandom = 6;
       // r.addNewOpened();
-      var request = calculateMoves();
-      addNewMarkerPosition();
+      RequestData request = calculateMoves();
+      defineMarkerRoute(request);
       var currentNumCell = r.currentNumCell;
       var lastRandom = r.lastRandom;
       emit(state.copyWith(
           request: request,
           currentCellNum: currentNumCell,
           diceResult: lastRandom,
-          isDiceBlocked: true));
+          isDiceBlocked: true,
+      ));
+
       print('dice still blocked');
     });
 
@@ -54,29 +54,21 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
     }
     //todo: специальные отдельные реквесты не входящие в массив для отображения специальной информации
     if (!r.isAllowMove || r.currentNumCell + r.lastRandom > 72) {
-      return getRequestByNumber(AFTER68);
+      return r.getRequestByNumber(AFTER68);
     }
-    var request = getRequestByNumber(r.currentNumCell);
-    print(
-        'Была позиция ${r.perviousNumCell}, выпало ${r.lastRandom}, стало ${r.currentNumCell} (${request.header})');
+    var request = r.getRequestByNumber(r.currentNumCell);
+    print('Была позиция ${r.previousNumCell}, выпало ${r.lastRandom}, стало ${r.currentNumCell} (${request.header})');
     return request;
   }
 
-  RequestData getRequestByNumber(int number) {
-    return r.requests.firstWhere((element) => element.num == number);
-  }
 
-  void addNewMarkerPosition() {
-    for (var toOpen = r.perviousNumCell + 1;
-        toOpen <= r.currentNumCell;
-        toOpen++) {
-      var currentRequest =
-          r.requests.firstWhereOrNull((element) => element.num == toOpen);
-      if (currentRequest != null &&
-          currentRequest.position != null &&
-          currentRequest.num != r.perviousNumCell) {
-        addMarkerPos(currentRequest.position!);
-      }
+  void defineMarkerRoute(RequestData toRequest) {
+
+    for (var numToOpen = r.previousNumCell + 1; numToOpen <= r.currentNumCell; numToOpen++) {
+      var requestToVisit = r.getRequestByNumber(numToOpen);
+      // if (requestToVisit.position != null) {
+        addMarkerPos(requestToVisit.position);
+      // }
     }
   }
 
@@ -86,3 +78,4 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
     // lastMarkerPos = position;
   }
 }
+

@@ -3,7 +3,6 @@ part of 'request_bloc.dart';
 @immutable
 abstract class RequestState{
   RequestState();
-
 }
 
 class RequestInitialState extends RequestState { }

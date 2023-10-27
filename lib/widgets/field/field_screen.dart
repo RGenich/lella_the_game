@@ -24,23 +24,15 @@ class _FieldWidgetState extends State<FieldWidget>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var state = Provider.of<LeelaAppState>(context, listen: false);
-      state.refreshCellPositions();
-      state.addNewMarkerPosition();
-      state.notify();
+      // state.refreshCellPositions();
+      // state.addNewMarkerPosition();
+      // state.notify();
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // var appState = context.watch<LeelaAppState>();
-    //
-    // int throwDice() {
-    //   setState(() {
-    //     number = appState.throwRandom();
-    //   });
-    //   return number;
-    // }
 
     return Scaffold(
       body: Container(

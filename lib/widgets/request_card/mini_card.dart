@@ -3,6 +3,8 @@ import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/request_data.dart';
+
 class MiniCard extends StatefulWidget {
   final RequestData request;
 

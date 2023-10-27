@@ -6,6 +6,7 @@ import 'package:Leela/service/request_keeper.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:collection/collection.dart';
+import '../../model/request_data.dart';
 import '../../widgets/field/transfer.dart';
 
 part 'request_event.dart';
@@ -43,9 +44,11 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
       foundTransfer.endPos = position;
     }
     //////////////конец поиска трансферов
-    if (_isAllTransfersDefined()) {
-      emit(AllTransferDefinedEvent(r.transfers));
-    }
+    // if (_isAllTransfersDefined()) {
+    //
+    //   //TODO: отдельные для трансферов?
+    //   emit(AllTransferDefinedEvent(r.transfers));
+    // }
   }
 
   bool _isAllTransfersDefined() {
