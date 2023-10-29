@@ -45,7 +45,7 @@ class _TransferWidgetState extends State<TransferWidget> {
 
     var width = calculateLength(startSnakePos, endSnakePos);
     print(
-        'building ${transfer.startNum} + ${transfer.endNum}, degrees: ${deg}');
+        'building ${transfer.startNumCell} + ${transfer.endCellNum}, degrees: ${deg}');
     return Positioned(
       top: top,
       left: left,

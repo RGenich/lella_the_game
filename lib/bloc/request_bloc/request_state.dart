@@ -9,7 +9,8 @@ class RequestInitialState extends RequestState { }
 
 class RequestLoadedState extends RequestState {
   final List <RequestData> requests;
-  RequestLoadedState(this.requests);
+  final bool isPositionDefined;
+  RequestLoadedState({required this.requests, this.isPositionDefined = false});
 }
 
 

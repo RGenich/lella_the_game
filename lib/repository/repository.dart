@@ -1,8 +1,6 @@
 import 'dart:collection';
-import 'dart:ui';
 
 import '../model/request_data.dart';
-import '../service/request_keeper.dart';
 import '../widgets/field/transfer.dart';
 
 class Repository {
@@ -401,37 +399,33 @@ class Repository {
     Transfer(46, 62, TransferType.ARROW),
     Transfer(54, 68, TransferType.ARROW),
   ];
-  int _numCelltoVisit = 0;
+  int _destNumCell = 0;
   int _prevCelltoVisit = 0;
-  final Queue<Offset> _markerRoute = Queue();
+  final Queue<RequestData> _markerRoute = Queue();
   int _lastRandomNum = 0;
   bool _isAllowMove = false;
 
   List<RequestData> get requests => _requests;
   List<Transfer> get transfers => _allTransfers;
   bool get isAllowMove => _isAllowMove;
-  int get lastRandom => _lastRandomNum;
-  int get currentNumCell => _numCelltoVisit;
-  int get previousNumCell => _prevCelltoVisit;
-  // int get previousNumCell => _numCelltoVisit.elementAt(_numCelltoVisit.length - 1);
-
-
+  int get diceScore => _lastRandomNum;
+  int get destNumCell => _destNumCell;
+  int get prevNumCell => _prevCelltoVisit;
   get markerQueue => _markerRoute;
   get defaultRequest => requests.first;
-  get getNextPosition => _markerRoute.removeFirst();
+  set prevNumCell (int newPrevious) => _prevCelltoVisit = newPrevious;
+  set newDestinationNum(int num) => _destNumCell = num;
+  RequestData get nextRequestToVisit => _markerRoute.removeFirst();
   void allowToMove() {
     _isAllowMove = true;
   }
 
-  set lastRandom (int newScore) {
-    _lastRandomNum = newScore;
-    _numCelltoVisit = _prevCelltoVisit + newScore;
+  void defineNewDestinationCell (int newScore) {
+      _lastRandomNum = newScore;
+      newDestinationNum = _prevCelltoVisit + newScore;
   }
-
 
   RequestData getRequestByNumber(int num) {
       return requests.firstWhere((element) => element.num == num);
   }
-
-
 }

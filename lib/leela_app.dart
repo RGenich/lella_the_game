@@ -47,6 +47,7 @@ class _LeelaAppState extends State<LeelaApp> {
               create: (context) => requestBloc..add(InitializingRequestsEvent())),
           BlocProvider(create: (context) => diceBloc..add(InitialDiceEvent())),
           BlocProvider(create: (context) => markerBloc..add(MarkerInitialEvent()))
+          // BlocProvider(create: (context) => markerBloc)
         ],
         child: ChangeNotifierProvider(
           create: (context) => LeelaAppState(),
@@ -185,21 +186,16 @@ class LeelaAppState extends ChangeNotifier {
   //   }
   // }
 
-  Offset getPositionByKey(GlobalKey<State<StatefulWidget>>? cellKey) {
-    RenderBox cellRenderBox =
-        cellKey?.currentContext?.findRenderObject() as RenderBox;
-    return cellRenderBox.localToGlobal(Offset.zero);
-  }
 
   void setTransfersPosition(Offset position, int num) {
     var foundTransfer =
-        toRemove.firstWhereOrNull((transfer) => transfer.startNum == num);
+        toRemove.firstWhereOrNull((transfer) => transfer.startNumCell == num);
     if (foundTransfer != null) {
       foundTransfer.startPos = position;
       return;
     }
     foundTransfer =
-        toRemove.firstWhereOrNull((transfer) => transfer.endNum == num);
+        toRemove.firstWhereOrNull((transfer) => transfer.endCellNum == num);
     if (foundTransfer != null) {
       foundTransfer.endPos = position;
     }

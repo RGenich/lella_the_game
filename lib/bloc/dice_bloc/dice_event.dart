@@ -9,11 +9,13 @@ class InitialDiceEvent extends DiceEvent {
 }
 
 class ThrowDiceStartEvent extends DiceEvent {
-
   ThrowDiceStartEvent();
 }
 
-
 class ThrowDiceEndEvent extends DiceEvent{
   ThrowDiceEndEvent();
+}
+
+class CheckTransfersAfterDiceEvent extends DiceEvent{
+  CheckTransfersAfterDiceEvent();
 }

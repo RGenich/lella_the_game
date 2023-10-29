@@ -1,12 +1,12 @@
 // ignore_for_file: unused_import
 
+import 'package:Leela/bloc/marker_bloc/marker_bloc.dart';
 import 'package:Leela/leela_app.dart';
 import 'package:Leela/service/request_keeper.dart';
 import 'package:Leela/widgets/field/marker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
 import '../../bloc/request_bloc/request_bloc.dart';
 import '../../model/request_data.dart';
@@ -35,7 +35,6 @@ class _PlayZoneState extends State<PlayZone> {
       startPos -= 9;
       endPos -= 9;
     }
-
     return rows;
   }
 
@@ -44,8 +43,8 @@ class _PlayZoneState extends State<PlayZone> {
     //Игровое поле
 
     return BlocBuilder<RequestBloc, RequestState>(builder: (context, state) {
+      MarkerBloc markerBloc = context.watch<MarkerBloc>();
       if (state is RequestLoadedState) {
-        // return CircularProgressIndicator(color: Colors.deepPurpleAccent);
         return AspectRatio(
           aspectRatio: 16 / 9,
           child: Container(
@@ -73,7 +72,14 @@ class _PlayZoneState extends State<PlayZone> {
                       child: Column(
                         children: buildRows(state.requests),
                       )),
-                  Marker(),
+                  Container(child: BlocBuilder<MarkerBloc, MarkerState>(
+                      builder: (context, state) {
+                    if (state is MarkerInitialState)
+                      markerBloc..add(MarkerFirstShowEvent());
+                    return !(state is MarkerInitialState)
+                        ? Marker()
+                        : SizedBox();
+                  }))
                 ]),
               ),
             ),

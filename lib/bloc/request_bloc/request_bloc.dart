@@ -2,57 +2,55 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:Leela/repository/repository.dart';
-import 'package:Leela/service/request_keeper.dart';
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
+
 import '../../model/request_data.dart';
 import '../../widgets/field/transfer.dart';
 
 part 'request_event.dart';
+
 part 'request_state.dart';
 
 class RequestBloc extends Bloc<RequestEvent, RequestState> {
-  final Repository r;
+  final Repository repository;
   List<RequestData> requests = [];
 
-  RequestBloc(this.r) : super(RequestInitialState()) {
+  RequestBloc(this.repository) : super(RequestInitialState()) {
     on<InitializingRequestsEvent>(_loadRequests);
-    on<RequestCellBuiltEvent>(_defineTransferPositions);
+    on<RequestCellBuiltEvent>(_definePositions);
   }
 
   _loadRequests(event, emit) async {
-    await Future<void>.delayed(Duration(seconds: 5));
-    requests = r.requests;
-    emit(RequestLoadedState(requests));
+    await Future<void>.delayed(Duration(seconds: 1));
+    requests = repository.requests;
+    emit(RequestLoadedState(requests: requests));
   }
 
-  void _defineTransferPositions(RequestCellBuiltEvent event, Emitter<RequestState> emit) {
+  void _definePositions(
+      RequestCellBuiltEvent event, Emitter<RequestState> emit) {
     var position = event.position;
     var num = event.request.num;
     //начало поиска позиций трансферов
-    var foundTransfer = r.transfers
-        .firstWhereOrNull((transfer) => transfer.startNum == num);
+    var foundTransfer = repository.transfers
+        .firstWhereOrNull((transfer) => transfer.startNumCell == num);
 
     if (foundTransfer != null) {
       foundTransfer.startPos = position;
     }
 
-    foundTransfer = r.transfers
-        .firstWhereOrNull((transfer) => transfer.endNum == num);
+    foundTransfer = repository.transfers
+        .firstWhereOrNull((transfer) => transfer.endCellNum == num);
     if (foundTransfer != null) {
       foundTransfer.endPos = position;
     }
-    //////////////конец поиска трансферов
-    // if (_isAllTransfersDefined()) {
-    //
-    //   //TODO: отдельные для трансферов?
-    //   emit(AllTransferDefinedEvent(r.transfers));
-    // }
+    if (_isAllTransfersDefined())
+      emit(RequestLoadedState(requests: requests, isPositionDefined: true));
   }
 
   bool _isAllTransfersDefined() {
-    return !r.transfers.any((element) =>
-    element.startPos == Offset.zero || element.endPos == Offset.zero);
+    return !repository.transfers.any((element) =>
+        element.startPos == Offset.zero || element.endPos == Offset.zero);
   }
 }

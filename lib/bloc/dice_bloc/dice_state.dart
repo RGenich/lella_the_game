@@ -4,25 +4,25 @@ class DiceBlocState{
 
   late int diceResult;
   late bool isDiceBlocked;
-  late int currentCellNum;
+  late int destCellNum;
   late RequestData request;
 
   DiceBlocState({
       this.diceResult = 1,
       this.isDiceBlocked = false,
-      this.currentCellNum = 0,
+      this.destCellNum = 0,
       required this.request
   });
 
   DiceBlocState copyWith({
     int? diceResult,
-    int? currentCellNum,
+    int? destCellNum,
     bool isDiceBlocked = false,
     RequestData? request
   }) {
     return DiceBlocState(
       diceResult: diceResult ?? this.diceResult,
-      currentCellNum: currentCellNum ?? this.currentCellNum,
+      destCellNum: destCellNum ?? this.destCellNum,
       isDiceBlocked: isDiceBlocked,
       request: request ?? this.request
     );

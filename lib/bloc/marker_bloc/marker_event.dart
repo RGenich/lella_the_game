@@ -5,3 +5,4 @@ abstract class MarkerEvent {}
 
 class TimeToMoveMarkerEvent extends MarkerEvent {}
 class MarkerInitialEvent extends MarkerEvent {}
+class MarkerFirstShowEvent extends MarkerEvent {}

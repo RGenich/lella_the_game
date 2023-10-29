@@ -21,7 +21,7 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
     markerBloc = BlocProvider.of<MarkerBloc>(context);
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        // diceBloc.add(ThrowDiceEndEvent());
+        markerBloc..add(TimeToMoveMarkerEvent());
       }
     });
     super.initState();
@@ -29,12 +29,10 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    void _makeDeal() {
+    void _throw() {
       diceBloc..add(ThrowDiceStartEvent());
-      markerBloc..add(TimeToMoveMarkerEvent());
       controller.reset();
       controller.forward();
-      // controller.
     }
 
     return BlocBuilder<DiceBloc, DiceBlocState>(
@@ -43,7 +41,7 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
           return AbsorbPointer(
               absorbing: state.isDiceBlocked,
               child: InkWell(
-                  onTap: _makeDeal,
+                  onTap: _throw,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
                     child: Ink(
@@ -57,7 +55,6 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
                       ),
                     ),
                   )));
-        // } else return SizedBox();
       },
     );
   }

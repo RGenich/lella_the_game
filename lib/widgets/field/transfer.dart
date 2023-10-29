@@ -7,16 +7,16 @@ import 'transfer_widget.dart';
 enum TransferType { ARROW, SNAKE }
 
 class Transfer {
-  int startNum;
+  int startNumCell;
   Offset startPos = Offset.zero;
-  int endNum;
+  int endCellNum;
   Offset endPos = Offset.zero;
   GlobalKey? startCellKey;
   GlobalKey? endCellKey;
   TransferType type;
   bool isVisible = false;
 
-  Transfer(this.startNum, this.endNum, this.type,
+  Transfer(this.startNumCell, this.endCellNum, this.type,
       {Offset? startPos, Offset? endPos, bool? isVisible});
 }
 
