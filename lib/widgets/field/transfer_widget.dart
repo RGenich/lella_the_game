@@ -1,3 +1,4 @@
+/*
 import 'package:Leela/widgets/field/transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,8 +26,8 @@ class _TransferWidgetState extends State<TransferWidget> {
   @override
   Widget build(BuildContext context) {
     var state = context.watch<LeelaAppState>();
-    var startSnakePos = transfer.startPos;
-    var endSnakePos = transfer.endPos;
+    // var startSnakePos = transfer.startPos;
+    // var endSnakePos = transfer.endPos;
     var type = transfer.type;
     Size cellSize = state.currentCellSize;
 
@@ -81,3 +82,4 @@ class _TransferWidgetState extends State<TransferWidget> {
     return vec.length;
   }
 }
+*/

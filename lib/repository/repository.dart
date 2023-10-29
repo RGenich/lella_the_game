@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ui';
 
 import '../model/request_data.dart';
 import '../widgets/field/transfer.dart';
@@ -404,6 +405,7 @@ class Repository {
   final Queue<RequestData> _markerRoute = Queue();
   int _lastRandomNum = 0;
   bool _isAllowMove = false;
+  Size _markerSize = Size(1000, 1000);
 
   List<RequestData> get requests => _requests;
   List<Transfer> get transfers => _allTransfers;
@@ -411,6 +413,7 @@ class Repository {
   int get diceScore => _lastRandomNum;
   int get destNumCell => _destNumCell;
   int get prevNumCell => _prevCelltoVisit;
+  Size get markerSize => _markerSize;
   get markerQueue => _markerRoute;
   get defaultRequest => requests.first;
   set prevNumCell (int newPrevious) => _prevCelltoVisit = newPrevious;
@@ -427,5 +430,9 @@ class Repository {
 
   RequestData getRequestByNumber(int num) {
       return requests.firstWhere((element) => element.num == num);
+  }
+
+  void setMarkerSize(Size size) {
+    _markerSize = size;
   }
 }

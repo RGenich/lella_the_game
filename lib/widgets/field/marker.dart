@@ -14,6 +14,8 @@ class Marker extends StatefulWidget {
 }
 
 class _MarkerState extends State<Marker> {
+
+
   @override
   Widget build(BuildContext context) {
     // appState.refreshCellPositions();
@@ -23,9 +25,10 @@ class _MarkerState extends State<Marker> {
       builder: (context, state) {
         MarkerBloc markerBloc = context.watch<MarkerBloc>();
         DiceBloc diceBloc = context.watch<DiceBloc>();
-        // markerBloc..add(MarkerFirstShowEvent());
-        // if (state is MarkerMovingState || state is MarkerFirstShowState) {
-
+        if (state is MarkerInitialState/* || state is MarkerSizeDefinedState*/) {
+          markerBloc..add(MarkerFirstShowEvent());
+          return SizedBox.shrink();
+        }
         return AnimatedPositioned(
             child: IgnorePointer(
               child: Container(
@@ -33,10 +36,8 @@ class _MarkerState extends State<Marker> {
                     fit: BoxFit.contain),
               ),
             ),
-            width: 100,
-            height: 100,
-            // width: cellSize.width,
-            // height: cellSize.height,
+            width: state.size.width,
+            height: state.size.height,
             left: state.position.dx,
             // left: state is MarkerFirstShowState ? state.position.dx : Offset
             //     .zero.dx,

@@ -43,7 +43,7 @@ class _PlayZoneState extends State<PlayZone> {
     //Игровое поле
 
     return BlocBuilder<RequestBloc, RequestState>(builder: (context, state) {
-      MarkerBloc markerBloc = context.watch<MarkerBloc>();
+
       if (state is RequestLoadedState) {
         return AspectRatio(
           aspectRatio: 16 / 9,
@@ -72,14 +72,7 @@ class _PlayZoneState extends State<PlayZone> {
                       child: Column(
                         children: buildRows(state.requests),
                       )),
-                  Container(child: BlocBuilder<MarkerBloc, MarkerState>(
-                      builder: (context, state) {
-                    if (state is MarkerInitialState)
-                      markerBloc..add(MarkerFirstShowEvent());
-                    return !(state is MarkerInitialState)
-                        ? Marker()
-                        : SizedBox();
-                  }))
+                   Container(child: state.isPositionDefined ? Marker() : SizedBox.shrink())
                 ]),
               ),
             ),

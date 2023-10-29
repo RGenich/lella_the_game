@@ -1,6 +1,6 @@
+import 'package:Leela/bloc/marker_bloc/marker_bloc.dart';
 import 'package:Leela/bloc/request_bloc/request_bloc.dart';
 import 'package:Leela/leela_app.dart';
-import 'package:Leela/service/request_keeper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,14 +31,14 @@ class _GameCellState extends State<GameCell> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Bloc requestBloc = BlocProvider.of<RequestBloc>(context);
+      Bloc markerBloc = BlocProvider.of<MarkerBloc>(context);
+
       RenderBox cellBox = cellKey.currentContext?.findRenderObject() as RenderBox;
       Size size = cellBox.size;
-      var position = cellBox.localToGlobal(Offset.zero);
-      request.position = position;
-      requestBloc.add(RequestCellBuiltEvent(request: request, position: position));
-      var appState = context.read<LeelaAppState>();
-      appState.setCurrentCellSize(size);
-      appState.setTransfersPosition(position, request.num);
+      Offset pos = cellBox.localToGlobal(Offset.zero);
+
+      requestBloc.add(RequestCellBuiltEvent(request: request, position: pos));
+      markerBloc.add(MarkerSizeDefinedEvent(size));
     });
     super.initState();
   }
@@ -75,4 +75,5 @@ class _GameCellState extends State<GameCell> {
     );
   }
 }
+
 
