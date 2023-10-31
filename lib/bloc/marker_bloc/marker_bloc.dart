@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:Leela/repository/repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
 import '../../model/request_data.dart';
@@ -15,23 +16,30 @@ class MarkerBloc extends Bloc<MarkerEvent, MarkerState> {
 
   MarkerBloc(this.repo) : super(MarkerInitialState()) {
     on<MarkerInitialEvent>((event, emit) {
-      print('marker init event processing');
-      // var req = repository.getRequestByNumber(68);
-      // if (req.position != Offset.zero)
-      //   emit(MarkerInitialState(position: req.position));
+      print('Инициализация маркера');
     });
 
-    on<MarkerSizeDefinedEvent>((event, emit) {
-      repo.setMarkerSize(event.size);
+    on<MarkerSizeDefiningEvent>((event, emit) {
+      var request = repo.getRequestByNumber(68);
+      print('это должно вызываться после построения всех клеток');
+      if (request.cellKey!=null) {
+        RenderBox renderBox = request.cellKey?.currentContext
+            ?.findRenderObject() as RenderBox;
+        Size size = renderBox.size;
+        repo.setMarkerSize(size);
+        var position = request.position;
+        print('размер маркера: ${size.width}');
+        emit(MarkerReadyState(isDestinationReach: false, position: position, size: size));
+      } else print ('CELL KEY NULL');
+
     });
 
-    on<MarkerFirstShowEvent>((event, emit) {
-      print('first show processing');
-      var req = repo.getRequestByNumber(68);
-      var size = repo.markerSize;
-      // if (req.position != Offset.zero)
-      emit(MarkerFirstShowState(position: req.position, size: size));
-    });
+    // on<MarkerFirstShowEvent>((event, emit) {
+    //   var req = repo.getRequestByNumber(68);
+    //   var size = repo.markerSize;
+    //   // if (req.position != Offset.zero)
+    //   emit(MarkerFirstShowState(position: req.position, size: size));
+    // });
 
     on<TimeToMoveMarkerEvent>((event, emit) {
       print('Checking move route...');

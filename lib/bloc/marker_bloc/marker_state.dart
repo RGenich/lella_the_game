@@ -13,20 +13,20 @@ class MarkerInitialState extends MarkerState {
   MarkerInitialState();
 }
 
-class MarkerFirstShowState extends MarkerState {
+class MarkerReadyState extends MarkerState {
   final Offset position;
   final Size size;
-
-  MarkerFirstShowState({required this.size,required this.position});
+  final bool isDestinationReach;
+  MarkerReadyState({required this.isDestinationReach, required this.size,required this.position});
 }
+//
+// class MarkerSizeDefinedState extends MarkerState {
+//
+// }
 
-class MarkerSizeDefinedState extends MarkerState {
-
-}
-
-class MarkerMovingState extends MarkerState {
-  final Offset position;
-  final Size size;
-  MarkerMovingState({ required this.size, required this.position, required isDestinationReach})
-      : super(isDestinationReach: isDestinationReach);
+class MarkerMovingState extends MarkerReadyState {
+  // final Offset position;
+  // final Size size;
+  MarkerMovingState({ required Size size, required Offset position, required isDestinationReach})
+      : super(isDestinationReach: isDestinationReach, size: size, position: position);
 }

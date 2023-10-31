@@ -1,20 +1,20 @@
 part of 'request_bloc.dart';
 
 @immutable
-abstract class RequestState{
-  RequestState();
+class RequestState{
+  late final List <RequestData> requests;
+  RequestState({this.requests = const []});
 }
 
 class RequestInitialState extends RequestState { }
 
 class RequestLoadedState extends RequestState {
-  final List <RequestData> requests;
-  final bool isPositionDefined;
-  RequestLoadedState({required this.requests, required this.isPositionDefined});
+  // final List <RequestData> requests;
+  // final bool isPositionDefined;
+  // RequestLoadedState({required this.requests, required this.isPositionDefined});
+  RequestLoadedState({required List <RequestData> requests}) : super(requests: requests);
 }
+class RequestPositionDefinedState extends RequestState {
 
-
-class AllTransferDefinedEvent extends RequestState {
-  final List<Transfer> transfers;
-  AllTransferDefinedEvent(this.transfers);
+  RequestPositionDefinedState({ required List<RequestData> requests}) : super (requests: requests);
 }

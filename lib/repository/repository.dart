@@ -405,7 +405,7 @@ class Repository {
   final Queue<RequestData> _markerRoute = Queue();
   int _lastRandomNum = 0;
   bool _isAllowMove = false;
-  Size _markerSize = Size(1000, 1000);
+  Size _markerSize = Size(333, 333);
 
   List<RequestData> get requests => _requests;
   List<Transfer> get transfers => _allTransfers;

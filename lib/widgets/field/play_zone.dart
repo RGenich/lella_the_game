@@ -12,6 +12,7 @@ import '../../bloc/request_bloc/request_bloc.dart';
 import '../../model/request_data.dart';
 import '../../repository/repository.dart';
 import 'field_cell.dart';
+import 'main_field.dart';
 import 'transfer.dart';
 
 class PlayZone extends StatefulWidget {
@@ -20,109 +21,70 @@ class PlayZone extends StatefulWidget {
 }
 
 class _PlayZoneState extends State<PlayZone> {
-  var zoneKey = GlobalKey();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Bloc requestBloc = BlocProvider.of<RequestBloc>(context);
+      Bloc markerBloc = BlocProvider.of<MarkerBloc>(context);
+      // requestBloc.add(event)
+      // RenderBox cellBox = cellKey.currentContext?.findRenderObject() as RenderBox;
+      // Size size = cellBox.size;
+      // Offset pos = cellBox.localToGlobal(Offset.zero);
+
+      // requestBloc.add(RequestCellBuiltEvent());
+      // markerBloc.add(MarkerSizeDefinedEvent());
+    });
+    super.initState();
+  }
 
   _PlayZoneState();
-
-  List<GameRow> buildRows(List<RequestData> requests) {
-    var startPos = 65;
-    var endPos = 74;
-    List<GameRow> rows = [];
-    for (var j = 1; j < 9; ++j) {
-      var requestsOfRow = requests.getRange(startPos, endPos).toList();
-      // RequestsKeeper.requests.getRange(startPos, endPos).toList();
-      rows.add(GameRow(requestsOfRow, j % 2 == 0));
-      startPos -= 9;
-      endPos -= 9;
-    }
-    return rows;
-  }
 
   @override
   Widget build(BuildContext context) {
     //Игровое поле
-
-    return BlocBuilder<RequestBloc, RequestState>(builder: (context, state) {
-
-      if (state is RequestLoadedState) {
-        return AspectRatio(
-          aspectRatio: 16 / 9,
-          child: Container(
-            child: NotificationListener<SizeChangedLayoutNotification>(
-              onNotification: rebuildPositions,
-              child: SizeChangedLayoutNotifier(
-                child: Stack(children: [
-                  Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                    image: AssetImage("assets/images/girl3.jpg"),
-                    fit: BoxFit.fill,
-                  ))),
-                  SizedBox(
-                      width: 5000,
-                      height: 5000,
-                      child: SvgPicture.asset(
-                        "assets/images/transfer_background.svg",
-                        fit: BoxFit.fill,
-                      )),
-                  // Snakes(),
-                  Container(
-                      key: zoneKey,
-                      // decoration: BoxDecoration(border: Border.all(color: Colors.brown)),
-                      child: Column(
-                        children: buildRows(state.requests),
-                      )),
-                   Container(child: state.isPositionDefined ? Marker() : SizedBox.shrink())
-                ]),
-              ),
-            ),
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: Container(
+        child: NotificationListener<SizeChangedLayoutNotification>(
+          onNotification: rebuildPositions,
+          child: SizeChangedLayoutNotifier(
+            child: Stack(children: [
+              Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                image: AssetImage("assets/images/girl3.jpg"),
+                fit: BoxFit.fill,
+              ))),
+              SizedBox(
+                  // width: 5000,
+                  // height: 5000,
+                  child: SvgPicture.asset(
+                "assets/images/transfer_background.svg",
+                fit: BoxFit.fill,
+              )),
+              // Snakes(),
+              MainField(),
+              Marker()
+            ]),
           ),
-        );
-      } else {
-        return CircularProgressIndicator(color: Colors.white);
-      }
-    });
-  }
-
-  bool rebuildPositions(notification) {
-    print('size changed');
-
-    //TODO: thats how sizes changed
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   var state = Provider.of<LeelaAppState>(context, listen: false);
-    //   state.refreshCellPositions();
-    //   // state.notify();
-    //   state.defineCellSize();
-    //   state.addNewMarkerPosition();
-    //   state.notify();
-    //   // state.rereadSnakesCellPositions();
-    // });
-    return true;
+        ),
+      ),
+    );
   }
 }
 
-class GameRow extends StatelessWidget {
-  final List<RequestData> requestsOfRow;
-  final bool isDirectSequence;
-  late final List<Widget> cells;
+bool rebuildPositions(notification) {
+  print('size changed');
 
-  GameRow(List<RequestData> this.requestsOfRow, bool this.isDirectSequence,
-      {Key? key})
-      : super(key: key) {
-    cells = createRowSequence(isDirectSequence);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(child: Row(children: cells));
-  }
-
-  List<Widget> createRowSequence(bool isDirectSequence) {
-    List<Widget> cells = [];
-    var sequence = isDirectSequence ? requestsOfRow : requestsOfRow.reversed;
-    for (var req in sequence) {
-      cells.add(GameCell(req));
-    }
-    return cells;
-  }
+  //TODO: thats how sizes changed
+  // WidgetsBinding.instance.addPostFrameCallback((_) {
+  //   var state = Provider.of<LeelaAppState>(context, listen: false);
+  //   state.refreshCellPositions();
+  //   // state.notify();
+  //   state.defineCellSize();
+  //   state.addNewMarkerPosition();
+  //   state.notify();
+  //   // state.rereadSnakesCellPositions();
+  // });
+  return true;
 }

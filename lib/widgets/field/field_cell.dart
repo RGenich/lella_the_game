@@ -1,5 +1,4 @@
-import 'package:Leela/bloc/marker_bloc/marker_bloc.dart';
-import 'package:Leela/bloc/request_bloc/request_bloc.dart';
+
 import 'package:Leela/leela_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,31 +25,30 @@ class _GameCellState extends State<GameCell> {
   _GameCellState(RequestData this.request) {
     request.cellKey = this.cellKey;
   }
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Bloc requestBloc = BlocProvider.of<RequestBloc>(context);
-      Bloc markerBloc = BlocProvider.of<MarkerBloc>(context);
-
-      RenderBox cellBox = cellKey.currentContext?.findRenderObject() as RenderBox;
-      Size size = cellBox.size;
-      Offset pos = cellBox.localToGlobal(Offset.zero);
-
-      requestBloc.add(RequestCellBuiltEvent(request: request, position: pos));
-      markerBloc.add(MarkerSizeDefinedEvent(size));
-    });
-    super.initState();
-  }
+  //
+  // @override
+  // void initState() {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     print('ПостФреймКоллБек КЛЕТКИ');
+  //
+  //     // Bloc requestBloc = BlocProvider.of<RequestBloc>(context);
+  //     // Bloc markerBloc = BlocProvider.of<MarkerBloc>(context);
+  //     //
+  //     // RenderBox cellBox = cellKey.currentContext?.findRenderObject() as RenderBox;
+  //     // Size size = cellBox.size;
+  //     // Offset pos = cellBox.localToGlobal(Offset.zero);
+  //     //
+  //     // requestBloc.add(RequestCellBuiltEvent(request: request, position: pos));
+  //     // markerBloc.add(MarkerSizeDefinedEvent(size));
+  //   });
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    context.watch<LeelaAppState>();
+    print('building cell ${request.num}');
 
     cellColor = request.isOpen ? openedColor : closedColor;
-    // var currentCellSize = appState.currentCellSize;
-    // var pathForMarker = appState.pathForMarker;
-    // print(currentCellSize);
     return Flexible(
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {

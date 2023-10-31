@@ -16,7 +16,7 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
       : super(DiceBlocState(
             diceResult: repo.diceScore, request: repo.defaultRequest)) {
     on<InitialDiceEvent>((event, emit) {
-      print('Init dice');
+
       emit(state.copyWith());
     });
 

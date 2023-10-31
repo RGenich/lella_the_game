@@ -3,39 +3,41 @@ import 'dart:ui';
 
 import 'package:Leela/repository/repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../model/request_data.dart';
-import '../../widgets/field/transfer.dart';
 
 part 'request_event.dart';
-
 part 'request_state.dart';
 
 class RequestBloc extends Bloc<RequestEvent, RequestState> {
-  final Repository repository;
+  final Repository repo;
   List<RequestData> requests = [];
 
-  RequestBloc(this.repository) : super(RequestInitialState()) {
+  RequestBloc(this.repo) : super(RequestInitialState()) {
     on<InitializingRequestsEvent>(_loadRequests);
-    on<RequestCellBuiltEvent>(_definePositions);
+    on<RequestCellBuiltEvent>(_savePositionsToRequest);
   }
 
   _loadRequests(event, emit) async {
     await Future<void>.delayed(Duration(seconds: 1));
-    requests = repository.requests;
-    emit(RequestLoadedState(requests: requests, isPositionDefined: false));
+    requests = repo.requests;
+    emit(RequestLoadedState(requests: requests));
   }
 
-  void _definePositions(
-      RequestCellBuiltEvent event, Emitter<RequestState> emit) {
-    var position = event.position;
-    var req = event.request;
-    req.position = position;
-    if (_isPositionDefined()) {
-      emit(RequestLoadedState(requests: requests, isPositionDefined: true));
+  void _savePositionsToRequest(RequestCellBuiltEvent event, Emitter<RequestState> emit) {
+
+    var requests = repo.requests;
+    var reqToBuild = requests.where((req) => req.cellKey!=null);
+
+    for (var req in reqToBuild) {
+      RenderBox renderBox = req.cellKey?.currentContext?.findRenderObject() as RenderBox;
+      // repo.setMarkerSize(renderBox.size);
+      Offset pos = renderBox.localToGlobal(Offset.zero);
+      req.position = pos;
     }
-    ;
+    // emit(RequestPositionDefinedState(requests: requests));
   }
 
   bool _isPositionDefined() {

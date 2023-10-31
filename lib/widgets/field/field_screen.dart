@@ -9,7 +9,6 @@ class FieldWidget extends StatefulWidget {
 
 class _FieldWidgetState extends State<FieldWidget>
     with TickerProviderStateMixin {
-  List<GameRow> rows = [];
 
   @override
   Widget build(BuildContext context) {

@@ -14,21 +14,16 @@ class Marker extends StatefulWidget {
 }
 
 class _MarkerState extends State<Marker> {
-
-
   @override
   Widget build(BuildContext context) {
     // appState.refreshCellPositions();
     // var cellSize = appState.currentCellSize;
 
-    return BlocBuilder<MarkerBloc, MarkerState>(
-      builder: (context, state) {
-        MarkerBloc markerBloc = context.watch<MarkerBloc>();
-        DiceBloc diceBloc = context.watch<DiceBloc>();
-        if (state is MarkerInitialState/* || state is MarkerSizeDefinedState*/) {
-          markerBloc..add(MarkerFirstShowEvent());
-          return SizedBox.shrink();
-        }
+    return BlocBuilder<MarkerBloc, MarkerState>(builder: (context, state) {
+      MarkerBloc markerBloc = context.watch<MarkerBloc>();
+      DiceBloc diceBloc = context.watch<DiceBloc>();
+      if (state is MarkerReadyState) {
+        // markerBloc..add(MarkerFirstShowEvent());
         return AnimatedPositioned(
             child: IgnorePointer(
               child: Container(
@@ -64,8 +59,8 @@ class _MarkerState extends State<Marker> {
                 markerBloc.add(TimeToMoveMarkerEvent());
               }
             });
-        // } else return SizedBox();
-      }
-    );
+      } else
+        return CircularProgressIndicator();
+    });
   }
 }
