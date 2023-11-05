@@ -1,4 +1,3 @@
-
 import 'package:Leela/leela_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,24 +24,6 @@ class _GameCellState extends State<GameCell> {
   _GameCellState(RequestData this.request) {
     request.cellKey = this.cellKey;
   }
-  //
-  // @override
-  // void initState() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     print('ПостФреймКоллБек КЛЕТКИ');
-  //
-  //     // Bloc requestBloc = BlocProvider.of<RequestBloc>(context);
-  //     // Bloc markerBloc = BlocProvider.of<MarkerBloc>(context);
-  //     //
-  //     // RenderBox cellBox = cellKey.currentContext?.findRenderObject() as RenderBox;
-  //     // Size size = cellBox.size;
-  //     // Offset pos = cellBox.localToGlobal(Offset.zero);
-  //     //
-  //     // requestBloc.add(RequestCellBuiltEvent(request: request, position: pos));
-  //     // markerBloc.add(MarkerSizeDefinedEvent(size));
-  //   });
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +44,12 @@ class _GameCellState extends State<GameCell> {
                   },
                   child: Align(
                       child: Text(
-                    // isDestinationCell ? "СЮДА" : "НЕТ",
-                    request.isOpen ? request.header : request.num.toString(),
-                    textAlign: TextAlign.left,
-                    style: TextStyle(fontSize: 10.0),
-                  ))));
+                        // isDestinationCell ? "СЮДА" : "НЕТ",
+                        request.isOpen ? request.header : request.num
+                            .toString(),
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: 10.0),
+                      ))));
         },
       ),
     );

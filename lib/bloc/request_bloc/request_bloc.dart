@@ -29,18 +29,19 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
   void _savePositionsToRequest(RequestCellBuiltEvent event, Emitter<RequestState> emit) {
 
     var requests = repo.requests;
+    RenderObject? pzRenderBox = repo.playZoneKey.currentContext?.findRenderObject();
     var reqToBuild = requests.where((req) => req.cellKey!=null);
 
     for (var req in reqToBuild) {
       RenderBox renderBox = req.cellKey?.currentContext?.findRenderObject() as RenderBox;
+
+      // renderBox.parent.
+      // var cellKey = req.cellKey?.currentContext.widget.
       // repo.setMarkerSize(renderBox.size);
-      Offset pos = renderBox.localToGlobal(Offset.zero);
+      Offset pos = renderBox.localToGlobal(Offset.zero, ancestor: pzRenderBox);
       req.position = pos;
     }
     // emit(RequestPositionDefinedState(requests: requests));
   }
 
-  bool _isPositionDefined() {
-    return !requests.any((req) => req.position == Offset.zero && req.cellKey != null);
-  }
 }

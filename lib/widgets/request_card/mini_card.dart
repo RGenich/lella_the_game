@@ -64,7 +64,7 @@ class _MiniCardState extends State<MiniCard> {
               child: Card(
                 borderOnForeground: true,
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.yellow),
+                    side: BorderSide(color: Colors. yellow),
                     borderRadius: BorderRadius.circular(10.0)),
                 shadowColor: Colors.orange,
                 child: SingleChildScrollView(

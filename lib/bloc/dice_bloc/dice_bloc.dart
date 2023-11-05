@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import '../../model/request_data.dart';
 
 part 'dice_event.dart';
+
 part 'dice_state.dart';
 
 class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
@@ -16,7 +17,6 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
       : super(DiceBlocState(
             diceResult: repo.diceScore, request: repo.defaultRequest)) {
     on<InitialDiceEvent>((event, emit) {
-
       emit(state.copyWith());
     });
 
@@ -35,20 +35,21 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
         isDiceBlocked: true,
       ));
       repo.prevNumCell = currentNumCell;
-
       print('dice still blocked');
     });
 
-    on<ThrowDiceEndEvent>((event, emit) {
-      print('dice unlocked');
-      emit(state.copyWith(isDiceBlocked: false));
-    });
+    // on<UnblockDiceEvent>((event, emit) {
+    //   print('dice unlocked');
+    //   emit(state.copyWith(isDiceBlocked: false));
+    // });
 
     on<CheckTransfersAfterDiceEvent>((event, emit) {
       if (hasTransfer()) {
         var req = repo.getRequestByNumber(repo.destNumCell);
-        emit(state.copyWith(request: req,isDiceBlocked: false, destCellNum: repo.destNumCell));
-      };
+        emit(state.copyWith(
+            request: req, isDiceBlocked: true, destCellNum: repo.destNumCell));
+      }
+      else emit(state.copyWith(isDiceBlocked: false));
     });
   }
 
@@ -67,7 +68,8 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
   }
 
   void defineMarkerRoute(RequestData toRequest) {
-    for (var numToOpen = repo.prevNumCell + 1;numToOpen <= repo.destNumCell;
+    for (var numToOpen = repo.prevNumCell + 1;
+        numToOpen <= repo.destNumCell;
         numToOpen++) {
       var requestToVisit = repo.getRequestByNumber(numToOpen);
       // if (requestToVisit.position != null) {
@@ -90,7 +92,8 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
 
     if (transfer != null) {
       transfer.isVisible = true;
-      print('Змея/Стрела ${transfer.type}! Новая конечная позиция: ${transfer.endCellNum}');
+      print(
+          'Змея/Стрела ${transfer.type}! Новая конечная позиция: ${transfer.endCellNum}');
       repo.prevNumCell = transfer.endCellNum;
       repo.newDestinationNum = transfer.endCellNum;
       RequestData req = repo.getRequestByNumber(transfer.endCellNum);

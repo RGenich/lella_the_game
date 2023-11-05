@@ -1,6 +1,9 @@
 import 'dart:collection';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/key.dart';
+
 import '../model/request_data.dart';
 import '../widgets/field/transfer.dart';
 
@@ -400,32 +403,40 @@ class Repository {
     Transfer(46, 62, TransferType.ARROW),
     Transfer(54, 68, TransferType.ARROW),
   ];
+  List<String> _traces = [];
   int _destNumCell = 0;
-  int _prevCelltoVisit = 0;
+  int _prevNumCell = 0;
+
   final Queue<RequestData> _markerRoute = Queue();
   int _lastRandomNum = 0;
   bool _isAllowMove = false;
   Size _markerSize = Size(333, 333);
+  late GlobalKey _playZoneKey;
 
   List<RequestData> get requests => _requests;
   List<Transfer> get transfers => _allTransfers;
   bool get isAllowMove => _isAllowMove;
   int get diceScore => _lastRandomNum;
   int get destNumCell => _destNumCell;
-  int get prevNumCell => _prevCelltoVisit;
+  int get prevNumCell => _prevNumCell;
   Size get markerSize => _markerSize;
-  get markerQueue => _markerRoute;
-  get defaultRequest => requests.first;
-  set prevNumCell (int newPrevious) => _prevCelltoVisit = newPrevious;
-  set newDestinationNum(int num) => _destNumCell = num;
+  Queue get markerQueue => _markerRoute;
+  RequestData get defaultRequest => requests.first;
   RequestData get nextRequestToVisit => _markerRoute.removeFirst();
+  GlobalKey get playZoneKey => _playZoneKey;
+  List<String> get traces => _traces;
+
+  void addTrace (String trace) => _traces.add(trace);
+  set playZoneKey(GlobalKey playZoneKey) => _playZoneKey = playZoneKey;
+  set prevNumCell (int newPrevious) => _prevNumCell = newPrevious;
+  set newDestinationNum(int num) => _destNumCell = num;
   void allowToMove() {
     _isAllowMove = true;
   }
 
   void defineNewDestinationCell (int newScore) {
       _lastRandomNum = newScore;
-      newDestinationNum = _prevCelltoVisit + newScore;
+      newDestinationNum = _prevNumCell + newScore;
   }
 
   RequestData getRequestByNumber(int num) {

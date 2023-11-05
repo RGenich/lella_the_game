@@ -20,34 +20,29 @@ class MarkerBloc extends Bloc<MarkerEvent, MarkerState> {
     });
 
     on<MarkerSizeDefiningEvent>((event, emit) {
+      // var playZoneKey = repo.playZoneKey;
       var request = repo.getRequestByNumber(68);
       print('это должно вызываться после построения всех клеток');
-      if (request.cellKey!=null) {
-        RenderBox renderBox = request.cellKey?.currentContext
-            ?.findRenderObject() as RenderBox;
+      if (request.cellKey != null) {
+        RenderBox renderBox =
+            request.cellKey?.currentContext?.findRenderObject() as RenderBox;
+        // RenderBox pzRenderBox = playZoneKey.currentContext?.findRenderObject() as RenderBox;
         Size size = renderBox.size;
         repo.setMarkerSize(size);
         var position = request.position;
         print('размер маркера: ${size.width}');
-        emit(MarkerReadyState(isDestinationReach: false, position: position, size: size));
-      } else print ('CELL KEY NULL');
-
+        emit(MarkerReadyState(
+            isDestinationReach: false, position: position, size: size));
+      } else
+        print('CELL KEY NULL');
     });
 
-    // on<MarkerFirstShowEvent>((event, emit) {
-    //   var req = repo.getRequestByNumber(68);
-    //   var size = repo.markerSize;
-    //   // if (req.position != Offset.zero)
-    //   emit(MarkerFirstShowState(position: req.position, size: size));
-    // });
-
-    on<TimeToMoveMarkerEvent>((event, emit) {
+    on<IsShouldMarkerMoveEvent>((event, emit) {
       print('Checking move route...');
       try {
         RequestData nextReq = repo.nextRequestToVisit;
         bool isDestReached = repo.destNumCell == nextReq.num;
-        if (isDestReached)
-          nextReq.isOpen = isDestReached;
+        if (isDestReached) nextReq.isOpen = isDestReached;
         Size size = repo.markerSize;
         emit(MarkerMovingState(
             size: size,
@@ -56,6 +51,10 @@ class MarkerBloc extends Bloc<MarkerEvent, MarkerState> {
       } catch (e) {
         print('Destination reached: ');
       }
+    });
+
+    on<PlayZoneKeyDefinedEvent>((event, emit) {
+      repo.playZoneKey = event.playZoneKey;
     });
   }
 }

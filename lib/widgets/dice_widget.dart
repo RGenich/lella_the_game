@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gif/gif.dart';
 
-import '../../bloc/dice_bloc/dice_bloc.dart';
-import '../../bloc/marker_bloc/marker_bloc.dart';
+import '../bloc/dice_bloc/dice_bloc.dart';
+import '../bloc/marker_bloc/marker_bloc.dart';
 
 class Dice extends StatefulWidget {
   @override
@@ -21,7 +21,7 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
     markerBloc = BlocProvider.of<MarkerBloc>(context);
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        markerBloc..add(TimeToMoveMarkerEvent());
+        markerBloc..add(IsShouldMarkerMoveEvent());
       }
     });
     super.initState();

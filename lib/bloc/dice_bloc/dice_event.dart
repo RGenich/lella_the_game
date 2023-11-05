@@ -12,8 +12,8 @@ class ThrowDiceStartEvent extends DiceEvent {
   ThrowDiceStartEvent();
 }
 
-class ThrowDiceEndEvent extends DiceEvent{
-  ThrowDiceEndEvent();
+class UnblockDiceEvent extends DiceEvent{
+  UnblockDiceEvent();
 }
 
 class CheckTransfersAfterDiceEvent extends DiceEvent{

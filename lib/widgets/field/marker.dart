@@ -1,5 +1,6 @@
 import 'package:Leela/bloc/dice_bloc/dice_bloc.dart';
 import 'package:Leela/bloc/marker_bloc/marker_bloc.dart';
+import 'package:Leela/bloc/overlay_bloc/overlay_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -19,11 +20,12 @@ class _MarkerState extends State<Marker> {
     // appState.refreshCellPositions();
     // var cellSize = appState.currentCellSize;
 
-    return BlocBuilder<MarkerBloc, MarkerState>(builder: (context, state) {
+    return BlocBuilder<MarkerBloc, MarkerState>(builder: (context, markerState) {
       MarkerBloc markerBloc = context.watch<MarkerBloc>();
-      DiceBloc diceBloc = context.watch<DiceBloc>();
-      if (state is MarkerReadyState) {
-        // markerBloc..add(MarkerFirstShowEvent());
+      DiceBloc diceBloc = context.read<DiceBloc>();
+      // OverlayBloc overlayBloc = context.read<OverlayBloc>();
+      OverlayBloc overlayBloc1 = BlocProvider.of<OverlayBloc>(context);
+      if (markerState is MarkerReadyState) {
         return AnimatedPositioned(
             child: IgnorePointer(
               child: Container(
@@ -31,32 +33,35 @@ class _MarkerState extends State<Marker> {
                     fit: BoxFit.contain),
               ),
             ),
-            width: state.size.width,
-            height: state.size.height,
-            left: state.position.dx,
-            // left: state is MarkerFirstShowState ? state.position.dx : Offset
-            //     .zero.dx,
-            top: state.position.dy,
-            duration: Duration(milliseconds: 600),
+
+            width: markerState.size.width,
+            height: markerState.size.height,
+            left: markerState.position.dx,
+            // left: Offset.zero.dx,
+            top: markerState.position.dy,
+            // top: Offset.zero.dy,
+            duration: Duration(milliseconds: 1500),
             curve: Curves.decelerate,
             onEnd: () {
-              if (state.isDestinationReach) {
+              if (markerState.isDestinationReach) {
                 showDialog(
                   context: context,
                   builder: (context) {
                     return BlocBuilder<DiceBloc, DiceBlocState>(
-                      builder: (context, state) {
-                        return MiniCard(state.request);
+                      buildWhen: (previous, current) => markerState.isDestinationReach,
+                      builder: (context, diceState) {
+                        overlayBloc1.add(AddInfoEvent(diceState.request.header));
+                        return MiniCard(diceState.request);
                       },
                     );
                   },
                 ).then((value) {
                   diceBloc.add(CheckTransfersAfterDiceEvent());
-                  markerBloc.add(TimeToMoveMarkerEvent());
-                  diceBloc.add(ThrowDiceEndEvent());
+                  markerBloc.add(IsShouldMarkerMoveEvent());
+                  // diceBloc.add(UnblockDiceEvent());
                 });
               } else {
-                markerBloc.add(TimeToMoveMarkerEvent());
+                markerBloc.add(IsShouldMarkerMoveEvent());
               }
             });
       } else
@@ -64,3 +69,5 @@ class _MarkerState extends State<Marker> {
     });
   }
 }
+
+
