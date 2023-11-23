@@ -38,23 +38,26 @@ class _DiceState extends State<Dice> with TickerProviderStateMixin {
     return BlocBuilder<DiceBloc, DiceBlocState>(
       builder: (context, state) {
         // if (state is DiceThrowedState) {
-          return AbsorbPointer(
-              absorbing: state.isDiceBlocked,
-              child: InkWell(
-                  onTap: _throw,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Ink(
-                      width: 70,
-                      height: 70,
-                      child: Gif(
-                        duration: Duration(milliseconds: 1500),
-                        controller: controller,
-                        image: AssetImage(
-                            "assets/images/cube${state.diceResult}.gif"),
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: AbsorbPointer(
+                absorbing: state.isDiceBlocked,
+                child: InkWell(
+                    onTap: _throw,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Ink(
+                        // width: 70,
+                        // height: 70,
+                        child: Gif(
+                          duration: Duration(milliseconds: 1500),
+                          controller: controller,
+                          image: AssetImage(
+                              "assets/images/cube${state.diceResult}.gif"),
+                        ),
                       ),
-                    ),
-                  )));
+                    ))),
+          );
       },
     );
   }

@@ -9,12 +9,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     // Widget page = definePage();
 
     return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(body: Column(children: [Expanded(child: FieldWidget())]));
+      return Scaffold(body: FieldWidget());
     });
   }
 

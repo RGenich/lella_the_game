@@ -28,10 +28,10 @@ class _LeelaAppState extends State<LeelaApp> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeLeft,
+    //   DeviceOrientation.landscapeRight,
+    // ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
     return RepositoryProvider(

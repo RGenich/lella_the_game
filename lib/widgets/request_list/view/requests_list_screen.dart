@@ -26,7 +26,7 @@ class _ListOfRequestState extends State<ListOfRequest> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView(
-              scrollDirection: Axis.vertical,
+              scrollDirection: Axis.horizontal,
               children: [
                 for (var request in state.requests)
                   ListTile(

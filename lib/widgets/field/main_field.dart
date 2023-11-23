@@ -25,9 +25,7 @@ class MainField extends StatelessWidget {
               children: rowsWithCell,
             ));
       }
-    } /*else
-          return CircularProgressIndicator(color: Colors.yellow);*/
-
+    }
         );
   }
 }

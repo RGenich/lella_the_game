@@ -40,7 +40,7 @@ class _MarkerState extends State<Marker> {
             // left: Offset.zero.dx,
             top: markerState.position.dy,
             // top: Offset.zero.dy,
-            duration: Duration(milliseconds: 1500),
+            duration: Duration(milliseconds: 900),
             curve: Curves.decelerate,
             onEnd: () {
               if (markerState.isDestinationReach) {
@@ -50,12 +50,12 @@ class _MarkerState extends State<Marker> {
                     return BlocBuilder<DiceBloc, DiceBlocState>(
                       buildWhen: (previous, current) => markerState.isDestinationReach,
                       builder: (context, diceState) {
-                        overlayBloc1.add(AddInfoEvent(diceState.request.header));
                         return MiniCard(diceState.request);
                       },
                     );
                   },
                 ).then((value) {
+                  overlayBloc1.add(UpdateOverlayEvent());
                   diceBloc.add(CheckTransfersAfterDiceEvent());
                   markerBloc.add(IsShouldMarkerMoveEvent());
                   // diceBloc.add(UnblockDiceEvent());

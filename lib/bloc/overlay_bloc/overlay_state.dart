@@ -7,6 +7,6 @@ class OverlayInitial extends TopOverlayState {}
 
 
 class InfoAddedState extends TopOverlayState{
-  final List<String> info;
-  InfoAddedState(this.info);
+  final List<OverlayStep> steps;
+  InfoAddedState(this.steps);
 }

@@ -1,7 +1,6 @@
-import 'package:Leela/leela_app.dart';
+import 'package:Leela/model/ovelay_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import '../bloc/overlay_bloc/overlay_bloc.dart';
 
@@ -13,27 +12,31 @@ class OverlayInfo extends StatefulWidget {
 }
 
 class _OverlayInfoState extends State<OverlayInfo> {
+  Map<StepType, IconData> types = {
+    StepType.USUAL: Icons.arrow_forward,
+    StepType.SNAKE: Icons.arrow_downward,
+    StepType.ARROW: Icons.arrow_upward,
+    StepType.START: Icons.circle_sharp
+  };
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<LeelaAppState>();
-    // var droppedFields = appState.openedCells;
-    // int lastScore = appState.getLastDiceScore;
     return BlocBuilder<OverlayBloc, TopOverlayState>(
       builder: (context, state) {
-        if (state is InfoAddedState) {
-          return Row(
-            children: generateTrace(state.info));
-        }
-         else return Text('DO FIRST MOVE');
+        return state is InfoAddedState
+            ? ListView(
+                scrollDirection: Axis.horizontal,
+                children: generateTrace(state.steps))
+            :  Text('DO FIRST MOVE');
       },
     );
   }
 
-  List<Widget> generateTrace(List<String> infos) {
+  List<Widget> generateTrace(List<OverlayStep> steps) {
     List<Widget> overlayData = [];
-    for (var info in infos) {
-      overlayData.add(Text(' ${info} '));
-      overlayData.add(Icon(Icons.arrow_right_outlined));
+    for (var step in steps) {
+      overlayData.add(Center(child: Icon(types[step.stepType])));
+      overlayData.add(Center(child: Text(' ${step.header} ')));
     }
     return overlayData;
   }

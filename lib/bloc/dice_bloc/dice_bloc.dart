@@ -1,4 +1,6 @@
+import 'package:Leela/model/ovelay_step.dart';
 import 'package:Leela/repository/repository.dart';
+import 'package:Leela/widgets/field/transfer.dart';
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
@@ -25,6 +27,8 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
       // r.lastRandom = Random().nextInt(6) + 1;
       repo.defineNewDestinationCell(6);
       RequestData request = calculateMarkerDestination();
+      repo.addTrace(
+          new OverlayStep(header: request.header, stepType: StepType.USUAL));
       defineMarkerRoute(request);
       var currentNumCell = repo.destNumCell;
       var lastRandom = repo.diceScore;
@@ -44,12 +48,26 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
     // });
 
     on<CheckTransfersAfterDiceEvent>((event, emit) {
-      if (hasTransfer()) {
-        var req = repo.getRequestByNumber(repo.destNumCell);
+      var transfer = findTransfer();
+      if (transfer != null) {
+        transfer.isVisible = true;
+        print('Змея/Стрела ${transfer.type}! Конечная позиция: ${transfer.endCellNum}');
+        repo.prevNumCell = transfer.endCellNum;
+        repo.newDestinationNum = transfer.endCellNum;
+        RequestData req = repo.getRequestByNumber(transfer.endCellNum);
+        addMarkerPos(req);
+        var request = repo.getRequestByNumber(repo.destNumCell);
+        repo.addTrace(OverlayStep(
+            header: request.header,
+            stepType: transfer.type == TransferType.SNAKE
+                ? StepType.SNAKE
+                : StepType.ARROW));
         emit(state.copyWith(
-            request: req, isDiceBlocked: true, destCellNum: repo.destNumCell));
-      }
-      else emit(state.copyWith(isDiceBlocked: false));
+            request: request,
+            isDiceBlocked: true,
+            destCellNum: repo.destNumCell));
+      } else
+        emit(state.copyWith(isDiceBlocked: false));
     });
   }
 
@@ -62,6 +80,7 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
       return repo.getRequestByNumber(AFTER68);
     }
     var request = repo.getRequestByNumber(repo.destNumCell);
+
     print(
         'Была позиция ${repo.prevNumCell}, выпало ${repo.destNumCell}, стало ${repo.destNumCell} (${request.header})');
     return request;
@@ -84,22 +103,9 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
     // lastMarkerPos = position;
   }
 
-  bool hasTransfer() {
+  Transfer? findTransfer() {
     var currentNumCell = repo.destNumCell;
-    var transfer = repo.transfers
+    return repo.transfers
         .firstWhereOrNull((t) => t.startNumCell == currentNumCell);
-    bool isTransferFound = false;
-
-    if (transfer != null) {
-      transfer.isVisible = true;
-      print(
-          'Змея/Стрела ${transfer.type}! Новая конечная позиция: ${transfer.endCellNum}');
-      repo.prevNumCell = transfer.endCellNum;
-      repo.newDestinationNum = transfer.endCellNum;
-      RequestData req = repo.getRequestByNumber(transfer.endCellNum);
-      addMarkerPos(req);
-      isTransferFound = true;
-    }
-    return isTransferFound;
   }
 }

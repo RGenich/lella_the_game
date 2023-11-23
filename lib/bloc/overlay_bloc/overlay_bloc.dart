@@ -1,5 +1,5 @@
-import 'dart:async';
 
+import 'package:Leela/model/ovelay_step.dart';
 import 'package:Leela/repository/repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -12,8 +12,7 @@ class OverlayBloc extends Bloc<OverlayEvent, TopOverlayState> {
 
   OverlayBloc(this.repository) : super(OverlayInitial()) {
 
-    on<AddInfoEvent>((event, emit) {
-        repository.addTrace(event.info);
+    on<UpdateOverlayEvent>((event, emit) {
         emit(InfoAddedState(repository.traces));
     });
   }

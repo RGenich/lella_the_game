@@ -25,19 +25,26 @@ class PlayZoneState extends State<PlayZone> {
         onNotification: rebuildPositions,
         child: SizeChangedLayoutNotifier(
           child: Stack(children: [
-            Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-              image: AssetImage("assets/images/girl3.jpg"),
-              fit: BoxFit.fill,
-            ))),
-            SizedBox(
-                // width: 5000,
-                // height: 5000,
-                child: SvgPicture.asset(
-              "assets/images/transfer_background.svg",
-              fit: BoxFit.fill,
-            )),
+            Positioned.fill(
+              child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white),
+                      image: DecorationImage(
+                image: AssetImage("assets/images/girl3.jpg"),
+                fit: BoxFit.cover,
+              ))),
+            ),
+            Positioned.fill(
+              child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.yellow)),
+                  // width: 5000,
+                  // height: 5000,
+                  child: SvgPicture.asset(
+                "assets/images/transfer_background.svg",
+                fit: BoxFit.cover,
+              )),
+            ),
             // Snakes(),
             MainField(),
             Marker()
