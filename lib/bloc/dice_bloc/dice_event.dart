@@ -12,9 +12,9 @@ class ThrowDiceStartEvent extends DiceEvent {
   ThrowDiceStartEvent();
 }
 
-class UnblockDiceEvent extends DiceEvent{
-  UnblockDiceEvent();
-}
+// class UnblockDiceEvent extends DiceEvent{
+//   UnblockDiceEvent();
+// }
 
 class CheckTransfersAfterDiceEvent extends DiceEvent{
   CheckTransfersAfterDiceEvent();

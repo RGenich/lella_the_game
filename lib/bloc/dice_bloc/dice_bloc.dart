@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:Leela/model/ovelay_step.dart';
 import 'package:Leela/repository/repository.dart';
 import 'package:Leela/widgets/field/transfer.dart';
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../model/request_data.dart';
@@ -24,28 +27,34 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
 
     on<ThrowDiceStartEvent>((event, emit) {
       print('dice blocked');
-      // r.lastRandom = Random().nextInt(6) + 1;
-      repo.defineNewDestinationCell(6);
-      RequestData request = calculateMarkerDestination();
-      repo.addTrace(
-          new OverlayStep(header: request.header, stepType: StepType.USUAL));
-      defineMarkerRoute(request);
-      var currentNumCell = repo.destNumCell;
-      var lastRandom = repo.diceScore;
-      emit(state.copyWith(
-        request: request,
-        destCellNum: currentNumCell,
-        diceResult: lastRandom,
-        isDiceBlocked: true,
-      ));
-      repo.prevNumCell = currentNumCell;
-      print('dice still blocked');
-    });
+      var random = Random().nextInt(6) + 1;
+      var diceBlocState = state;
+      if (random == 6) {
+        repo.defineNewDestinationCell(random);
+        RequestData request = calculateMarkerDestinationRequest();
+        repo.addTrace(
+            new OverlayStep(header: request.header, stepType: StepType.USUAL));
+        defineMarkerRoute(request);
+        var currentNumCell = repo.destNumCell;
+        var lastRandom = repo.diceScore;
 
-    // on<UnblockDiceEvent>((event, emit) {
-    //   print('dice unlocked');
-    //   emit(state.copyWith(isDiceBlocked: false));
-    // });
+        emit(diceBlocState.copyWith(
+          request: request,
+          destCellNum: currentNumCell,
+          diceResult: lastRandom,
+          isDiceBlocked: true,
+        ));
+        repo.prevNumCell = currentNumCell;
+        print('dice still blocked');
+      } else {
+        emit(diceBlocState.copyWith(
+          request: repo.getRequestByNumber(-1),
+          destCellNum: 68,
+          diceResult: random,
+          isDiceBlocked: false,
+        ));
+      }
+    });
 
     on<CheckTransfersAfterDiceEvent>((event, emit) {
       var transfer = findTransfer();
@@ -66,19 +75,24 @@ class DiceBloc extends Bloc<DiceEvent, DiceBlocState> {
             request: request,
             isDiceBlocked: true,
             destCellNum: repo.destNumCell));
-      } else
+      } else {
+        print('Unblocking of dice...');
         emit(state.copyWith(isDiceBlocked: false));
+      }
     });
   }
 
-  RequestData calculateMarkerDestination() {
-    if (!repo.isAllowMove && repo.destNumCell == 6) {
-      repo.allowToMove();
-    }
-    //todo: специальные отдельные реквесты не входящие в массив для отображения специальной информации
-    if (!repo.isAllowMove || repo.destNumCell + repo.diceScore > 72) {
-      return repo.getRequestByNumber(AFTER68);
-    }
+  RequestData calculateMarkerDestinationRequest() {
+    // if (!repo.isAllowMove && repo.destNumCell == 6) {
+    //   repo.allowToMove();
+    // }
+    // //todo: специальные отдельные реквесты не входящие в массив для отображения специальной информации
+    // if (!repo.isAllowMove || repo.destNumCell + repo.diceScore > 72) {
+    //   var notStartRequest = repo.getRequestByNumber(AFTER68);
+    //   // var notStartRequest = repo.getRequestByNumber(-1);
+    //   // notStartRequest.position = repo.getRequestByNumber(AFTER68).position;
+    //   return notStartRequest;
+    // }
     var request = repo.getRequestByNumber(repo.destNumCell);
 
     print(

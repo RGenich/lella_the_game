@@ -40,11 +40,11 @@ class _MiniCardState extends State<MiniCard> {
         .textTheme;
     // appState = context.watch<LeelaAppState>();
     final Offset reqPosition = request.position;
+    final Size cellSize = request.size;
 
     return BlocBuilder<MarkerBloc, MarkerState>(
       builder: (context, state) {
         return LayoutBuilder(builder: (context, constraints) {
-          Size currentCellSize = state.size;
           var expandedHeight = constraints.maxHeight / 100 * 99;
           var spaceByTop = expandedHeight / 100 * 80;
           return Align(
@@ -52,9 +52,9 @@ class _MiniCardState extends State<MiniCard> {
             child: AnimatedContainer(
               curve: Curves.decelerate,
               // height: expanded ? 700.0 : 400.0 ,
-              height: expanded ? expandedHeight : currentCellSize.height,
+              height: expanded ? expandedHeight : cellSize.height,
               // width: expanded ? expandedWidth : currentCellSize.width,
-              width: expanded ? expandedHeight * 1.5 : currentCellSize.width,
+              width: expanded ? expandedHeight * 1.5 : cellSize.width,
               duration: Duration(milliseconds: 1700),
               transform: expanded
                   ? Matrix4.translationValues(

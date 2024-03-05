@@ -15,15 +15,12 @@ class MainField extends StatelessWidget {
         return CircularProgressIndicator(color: Colors.cyan);
       else {
         List<GameRow> rowsWithCell = buildRows(state.requests);
-
         context.read<RequestBloc>()..add(RequestCellBuiltEvent());
         context.read<MarkerBloc>()..add(MarkerSizeDefiningEvent());
 
-        return Container(
-            decoration: BoxDecoration(border: Border.all(color: Colors.brown)),
-            child: Column(
-              children: rowsWithCell,
-            ));
+        return Column(
+          children: rowsWithCell,
+        );
       }
     }
         );

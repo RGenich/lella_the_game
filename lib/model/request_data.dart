@@ -10,6 +10,7 @@ class RequestData {
   final String description;
 
   Offset position = Offset.zero;
+  Size size = Size.zero;
 
   GlobalKey? get cellKey => _cellKey;
 

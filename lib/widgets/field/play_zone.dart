@@ -17,41 +17,31 @@ class PlayZoneState extends State<PlayZone> {
 
   @override
   Widget build(BuildContext context) {
-    // context.read<MarkerBloc>().add(PlayZoneKeyDefinedEvent(key));
-    //Игровое поле
-    return AspectRatio(
-      aspectRatio: 16/9,
-      child: NotificationListener<SizeChangedLayoutNotification>(
-        onNotification: rebuildPositions,
-        child: SizeChangedLayoutNotifier(
-          child: Stack(children: [
-            Positioned.fill(
-              child: Container(
+    return
+    NotificationListener<SizeChangedLayoutNotification>(
+          onNotification: rebuildPositions,
+          child: SizeChangedLayoutNotifier(
+            child: Stack(children: [
+              Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white),
+                    // border: Border.all(color: Colors.white),
                       image: DecorationImage(
                 image: AssetImage("assets/images/girl3.jpg"),
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ))),
-            ),
-            Positioned.fill(
-              child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.yellow)),
-                  // width: 5000,
-                  // height: 5000,
+              Container(
                   child: SvgPicture.asset(
                 "assets/images/transfer_background.svg",
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               )),
-            ),
-            // Snakes(),
-            MainField(),
-            Marker()
-          ]),
-        ),
-      ),
-    );
+              // Snakes(),
+              MainField(),
+              Marker()
+            ]),
+          ),
+        );
+      // ),
+    // );
   }
 }
 

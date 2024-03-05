@@ -1,4 +1,3 @@
-
 import 'package:Leela/repository/repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,8 +18,8 @@ class MarkerBloc extends Bloc<MarkerEvent, MarkerState> {
 
     on<MarkerSizeDefiningEvent>((event, emit) {
       // var playZoneKey = repo.playZoneKey;
-      var request = repo.getRequestByNumber(68);
-      print('это должно вызываться после построения всех клеток');
+      var request = repo.getLastRequest();
+      // var request = repo.getRequestByNumber(68);
       if (request.cellKey != null) {
         RenderBox renderBox =
             request.cellKey?.currentContext?.findRenderObject() as RenderBox;
@@ -30,24 +29,28 @@ class MarkerBloc extends Bloc<MarkerEvent, MarkerState> {
         var position = request.position;
         print('размер маркера: ${size.width}');
         emit(MarkerReadyState(
-            isDestinationReach: false, position: position, size: size));
+            isDestinationReach: true, position: position, size: size));
       } else
         print('CELL KEY NULL');
     });
 
     on<IsShouldMarkerMoveEvent>((event, emit) {
       print('Checking move route...');
+      Size size = repo.markerSize;
       try {
         RequestData nextReq = repo.nextRequestToVisit;
         bool isDestReached = repo.destNumCell == nextReq.num;
-        if (isDestReached) nextReq.isOpen = isDestReached;
-        Size size = repo.markerSize;
+        if (isDestReached) {
+          nextReq.isOpen = isDestReached;
+        }
         emit(MarkerMovingState(
             size: size,
             position: nextReq.position,
             isDestinationReach: isDestReached));
       } catch (e) {
-        print('Destination reached: ');
+        print('Destination reached');
+        // emit(MarkerStopState());
+
       }
     });
 
@@ -56,3 +59,4 @@ class MarkerBloc extends Bloc<MarkerEvent, MarkerState> {
     });
   }
 }
+

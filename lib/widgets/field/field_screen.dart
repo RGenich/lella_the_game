@@ -17,47 +17,35 @@ class _FieldWidgetState extends State<FieldWidget>
 
   @override
   initState() {
-    //calling the getHeight Function after the Layout is Rendered
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
     var markerBloc = BlocProvider.of<MarkerBloc>(context);
     markerBloc..add(PlayZoneKeyDefinedEvent(pzKey));
-    // });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        // constraints: BoxConstraints.(),
-        decoration: BoxDecoration(border: Border.all(color: Colors.white)),
-        // height:  MediaQuery.of(context).size.height,
-        // width:  MediaQuery.of(context).size.width,
-        child: Column(
-        // scrollDirection: Axis.horizontal,
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          // mainAxisSize: MainAxisSize.max,
-          children: [
-            Flexible(flex: 5, child: OverlayInfo()),
-            Flexible(
-              flex: 72,
-              child: Container(
-                decoration: BoxDecoration(border: Border.all(color: Colors.blue)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Flexible(flex: 10, child: PlayZone(key: pzKey)),
-                    Flexible(flex: 1, child: Container(
-                        decoration: BoxDecoration(border: Border.all(color: Colors.green)),
-                        child: Dice())),
-                  ],
-                ),
-              ),
-            ),
-            // SizedBox(width: 10,),
-          ],
+    return Column(
+      children: [
+        Flexible(flex: 5, child: OverlayInfo()),
+        Flexible(
+          flex: 72,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                  flex: 10,
+                  child: Align(
+                      child: AspectRatio(
+                          aspectRatio: 18 / 9,
+                          child: PlayZone(key: pzKey)))),
+              Flexible(
+                  flex: 1,
+                  child: Container(child: Dice())),
+            ],
+          ),
         ),
-        // )
+      ],
     );
   }
 }
